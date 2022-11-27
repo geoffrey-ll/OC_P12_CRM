@@ -19,14 +19,14 @@ class Person(AbstractBaseUser, PermissionsMixin):
     phone = models.PositiveBigIntegerField()
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    # is_staff = models.BooleanField()
+    is_staff = models.BooleanField()
     # is_active = models.BooleanField()
     # assign_table_team
 
     objects = PersonManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["email", "first_name", "last_name", "phone"]
+    REQUIRED_FIELDS = ["first_name", "last_name", "phone", "is_staff"]
 
     # class Meta:
     #     verbose_name = _("user")
