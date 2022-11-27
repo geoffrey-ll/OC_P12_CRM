@@ -41,14 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
-    "contracts",
-    "events",
+    "additional_data",
     "persons",
-    "users",
-    "clients",
-    "prospects",
-    "companies",
-    "locations",
+    "products",
 ]
 
 MIDDLEWARE = [
@@ -89,10 +84,19 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': BASE_DIR / 'db.postgresql',
+        # "ENGINE": "django.db.backends.postgresql",
+        # "name": BASE_DIR / "db.postgresql",
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'OPTIONS': {
+#             'service': 'my_service',
+#             'passfile': '.my_pgpass',
+#         },
+#     }
+# }
 
 
 # Password validation
@@ -113,12 +117,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTH_USER_MODEL = "persons.Person"
+AUTH_USER_MODEL = "persons.Person"
+# # AUTHENTICATION_BACKENDS = ['persons.backends.EmailBackend']
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "fr-FR"
+LANGUAGE_CODE = 'fr-FR'
 
 TIME_ZONE = 'UTC'
 
