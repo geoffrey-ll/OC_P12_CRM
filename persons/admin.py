@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from persons.models import (
     Client, ManagerTeamEmployee, Prospect, SalesTeamEmployee,
-    SupportTeamEmployee
+    SupportTeamEmployee, Person
 )
 
 
@@ -10,6 +10,7 @@ class ManagerTeamEmployeeAdmin(admin.ModelAdmin):
     """Représentation des objets ManagerTeamEmployee dans l'administration
     Django.
     """
+    list_display = ("__str__", "id",)
     # list_display = ("id", "account_email", "first_name", "last_name", "phone",
     #                 "date_created", "date_updated", "account_is_admin")
     # list_filter = ("is_admin",)
@@ -27,6 +28,7 @@ class SalesTeamEmployeeAdmin(admin.ModelAdmin):
     """Représentation des objets SalesTeamEmployee dans l'administration
     Django.
     """
+    list_display = ("__str__", "id",)
     # list_display = ("id", "account_email", "first_name", "last_name", "phone",
     #                 "date_created", "date_updated", "account_is_admin")
 
@@ -35,6 +37,7 @@ class SupportTeamEmployeeAdmin(admin.ModelAdmin):
     """Représentation des objets SupportTeamEmployee dans l'administration
     Django.
     """
+    list_display = ("__str__", "id",)
     # list_display = ("id", "account_email", "first_name", "last_name", "phone",
     #                 "date_created", "date_updated", "account_is_admin")
 
@@ -59,3 +62,4 @@ admin.site.register(SalesTeamEmployee, SalesTeamEmployeeAdmin)
 admin.site.register(SupportTeamEmployee, SupportTeamEmployeeAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Prospect, ProspectAdmin)
+# admin.site.register(Person)

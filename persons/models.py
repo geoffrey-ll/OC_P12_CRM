@@ -15,36 +15,39 @@ class Person(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
 
-class ManagerTeamEmployee(Person):
+
+class Employee(Person):
+    account = models.OneToOneField(MyUser, on_delete=models.RESTRICT)
+
+    # A terme, cette fonction doit être rendu obsolète.
+    def save(self, *args, **kwargs):
+        if self.account.team == "MA" or self.account.team == "WM":
+            self.account.is_admin = True
+        else:
+            self.account.is_admin = False
+        self.account.save()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{super().__str__()} (id: {self.account.id})"
+
+
+class ManagerTeamEmployee(Employee):
     """Modèle pour les employés de l'équipe de management."""
-    account = models.OneToOneField(MyUser, on_delete=models.RESTRICT)
-
-    def save(self, *args, **kwargs):
-        self.account.is_admin = True
-        self.account.save()
-        super().save(*args, **kwargs)
+    pass
 
 
-class SalesTeamEmployee(Person):
+class SalesTeamEmployee(Employee):
     """Modèle pour les employés de l'équipe de ventes."""
-
-    account = models.OneToOneField(MyUser, on_delete=models.RESTRICT)
-
-    def save(self, *args, **kwargs):
-        self.account.is_admin = False
-        self.account.save()
-        super().save(*args, **kwargs)
+    pass
 
 
-class SupportTeamEmployee(Person):
+class SupportTeamEmployee(Employee):
     """Modèle poure les employés de l'équipe de support."""
-    account = models.OneToOneField(MyUser, on_delete=models.RESTRICT)
-
-    def save(self, *args, **kwargs):
-        self.account.is_admin = False
-        self.account.save()
-        super().save(*args, **kwargs)
+    pass
 
 
 class Client(Person):
@@ -56,6 +59,9 @@ class Client(Person):
                                           on_delete=models.RESTRICT)
     id_company = models.ForeignKey(to=Company, on_delete=models.RESTRICT,
                                    blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
 
 
 class Prospect(Person):

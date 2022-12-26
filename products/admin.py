@@ -4,12 +4,12 @@ from .models import (Contract, Event)
 
 
 class ContractAdmin(admin.ModelAdmin):
-    list_display = ("id", "id_client", "contract_number", "payment_due", 
-                    "closed")
+    list_display = ("id", "client", "contract_number", "payment_due",
+                    "closed", "date_created", "date_updated")
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ("id", "id_employee_support", "id_contract", "id_location",
+    list_display = ("id", "support_employee", "contract", "location",
                     "status", "start_event", "end_event", "attendees", "notes")
     pass
 

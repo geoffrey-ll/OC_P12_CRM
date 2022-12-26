@@ -6,6 +6,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
 from .models import MyUser
+from .managers import determine_is_admin_status
 
 
 class UserCreationForm(forms.ModelForm):
@@ -17,7 +18,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ("email",)
+        fields = ("email", "team")
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -31,6 +32,7 @@ class UserCreationForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        user.is_admin = determine_is_admin_status(user.team)
         if commit:
             user.save()
         return user
@@ -41,11 +43,20 @@ class UserChangeForm(forms.ModelForm):
     the user, but replaces the password field with admin's
     disabled password hash display field.
     """
+
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = MyUser
-        fields = ("email", "password", "is_active", "is_admin", "is_staff")
+        fields = ("email", "password", "team", "is_active", "is_admin",
+                  "is_staff")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_admin = determine_is_admin_status(user.team)
+        if commit:
+            user.save()
+        return user
 
 
 class UserAdmin(BaseUserAdmin):
@@ -56,10 +67,11 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ("email", "is_admin", "is_staff")
+    list_display = ("id", "email", "team", "is_admin", "is_staff")
     list_filter = ("is_admin",)
     fieldsets = (
         (None, {"fields": ("email", "password")}),
+        ("Add info", {"fields": ("team",)}),
         ("Permissions", {"fields": ("is_admin", "is_staff")}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -67,7 +79,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("email", "password1", "password2"),
+            "fields": ("email", "team", "password1", "password2"),
         }),
     )
     search_fields = ("email",)

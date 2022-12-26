@@ -1,24 +1,30 @@
 from django.contrib.auth.base_user import BaseUserManager
 
 
+def determine_is_admin_status(team):
+    if team == "MA" or team == "WM":
+        return True
+    else:
+        return False
+
+
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+
+    def create_user(self, email, team, password=None):
         if not email:
             raise ValueError('Users must have an email address')
+        if not team:
+            raise ValueError("Users must have a team")
 
-        user = self.model(
-            email=self.normalize_email(email),
-        )
+        user = self.model(team=team, email=self.normalize_email(email))
 
+        user.is_admin = determine_is_admin_status(user.team)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None):
-        user = self.create_user(
-            email,
-            password=password
-        )
-        user.is_admin = True
+    def create_superuser(self, email, team, password=None):
+        user = self.create_user(email, team=team, password=password)
+
         user.save(using=self._db)
         return user
