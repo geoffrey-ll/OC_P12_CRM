@@ -37,6 +37,9 @@ class Employee(Person):
     def __str__(self):
         return f"{super().__str__()} (id: {self.account.id})"
 
+    class Meta:
+        abstract = True
+
 
 class ManagerTeamEmployee(Employee):
     """Modèle pour les employés de l'équipe de management."""
