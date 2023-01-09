@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Contract, Event
@@ -17,3 +17,10 @@ class EventViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Event.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            super().create(request, *args, **kwargs)
+
+        except Exception as e:
+            raise ValidationError(str(e))

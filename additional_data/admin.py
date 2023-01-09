@@ -15,7 +15,7 @@ def concatenate_all_elmt_of_address(obj):
 
 class CompanyAdmin(admin.ModelAdmin):
     """Représentation des objets Company dans l'administration Django."""
-    list_display = ("id", "siren", "name", "designation")
+    list_display = ("id", "siren", "name", "designation", "date_created", "date_updated")
 
 
 class LocationAdmin(admin.ModelAdmin):

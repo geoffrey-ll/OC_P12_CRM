@@ -27,6 +27,23 @@ from additional_data.models import Location
 from persons.models import (Client, SupportTeamEmployee)
 
 
+def determine_a_next_contract_number():
+    """Identifie le prochain numéro de contrat."""
+    now = timezone.now()
+    actually_year_month = int(str(now.year) + str(now.month).zfill(2))
+    try:
+        last_contract_number = Contract.objects.all().filter(
+            contract_number__startswith=actually_year_month
+        ).order_by("-contract_number")[0].contract_number
+        next_number_of_month = int(str(last_contract_number)[-4:]) + 1
+    except IndexError:
+        next_number_of_month = 1
+
+    next_contract_number = int(str(actually_year_month)
+                               + str(next_number_of_month).zfill(4))
+    return next_contract_number
+
+
 class Contract(models.Model):
     """Modèle Contract.
 
@@ -43,27 +60,9 @@ class Contract(models.Model):
     - __str__
     """
 
-    @staticmethod
-    def determine_a_next_contract_number():
-        """Identifie le prochain numéro de contrat."""
-        now = timezone.now()
-        actually_year_month = int(str(now.year) + str(now.month))
-        try:
-            last_contract_number = Contract.objects.all().filter(
-                contract_number__startswith=actually_year_month
-            ).order_by("-contract_number")[0].contract_number
-            next_number_of_month = int(str(last_contract_number)[-4:]) + 1
-        except IndexError:
-            next_number_of_month = 1
-
-        next_contract_number = int(str(actually_year_month)
-                                   + str(next_number_of_month).zfill(4))
-        return next_contract_number
-
-
     client = models.ForeignKey(to=Client, on_delete=models.RESTRICT)
     closed = models.BooleanField(default=False)
-    # Doit être complété automatiquement et non seulement sugéré.
+    # Doit être complété automatiquement et non seulement suggéré.
     contract_number = models.PositiveSmallIntegerField(
         default=determine_a_next_contract_number, unique=True,
         validators=[validate_contract_number_format])
@@ -128,3 +127,7 @@ class Event(models.Model):
             raise ValidationError(message={
                 "end_event": _(MESS_VAL_ERR__END_EVENT_INF_START_EVENT)
             })
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)

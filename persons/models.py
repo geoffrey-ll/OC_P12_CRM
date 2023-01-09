@@ -18,6 +18,9 @@ class Person(models.Model):
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
 
+    class Meta:
+        abstract = True
+
 
 class Employee(Person):
     account = models.OneToOneField(MyUser, on_delete=models.RESTRICT)
