@@ -1,59 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from accounts.models import MyUser
+from accounts.models import Person, SalesTeamEmployee
 from additional_data.models import Company
-
-
-
-# Create your models here.
-class Person(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    # Doit créer un validateur pour vérifier un format de numéro de téléphone.
-    phone = models.PositiveBigIntegerField()
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.last_name} {self.first_name}"
-
-    class Meta:
-        abstract = True
-
-
-class Employee(Person):
-    account = models.OneToOneField(MyUser, on_delete=models.RESTRICT)
-
-    # A terme, cette fonction doit être rendu obsolète.
-    def save(self, *args, **kwargs):
-        if self.account.team == "MA" or self.account.team == "WM":
-            self.account.is_admin = True
-        else:
-            self.account.is_admin = False
-        self.account.save()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{super().__str__()} (id: {self.account.id})"
-
-    class Meta:
-        abstract = True
-
-
-class ManagerTeamEmployee(Employee):
-    """Modèle pour les employés de l'équipe de management."""
-    pass
-
-
-class SalesTeamEmployee(Employee):
-    """Modèle pour les employés de l'équipe de ventes."""
-    pass
-
-
-class SupportTeamEmployee(Employee):
-    """Modèle poure les employés de l'équipe de support."""
-    pass
 
 
 class Client(Person):

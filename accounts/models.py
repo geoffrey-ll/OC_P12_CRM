@@ -5,7 +5,22 @@ from django.utils.translation import gettext_lazy as _
 from accounts.managers import MyUserManager
 
 
-class MyUser(AbstractBaseUser):
+class Person(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    # Doit créer un validateur pour vérifier un format de numéro de téléphone.
+    phone = models.PositiveBigIntegerField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
+
+    class Meta:
+        abstract = True
+
+
+class Employee(AbstractBaseUser, Person):
 
     class PossibleTeam(models.TextChoices):
         WEBMASTER = "WM", _("Webmaster")
@@ -24,7 +39,8 @@ class MyUser(AbstractBaseUser):
     objects = MyUserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["team"]
+    REQUIRED_FIELDS = ["team", "first_name", "last_name", "phone"]
+
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
@@ -36,8 +52,24 @@ class MyUser(AbstractBaseUser):
         # Simplest possible answer: Yes, always
         return self.is_admin
 
-    class Meta:
-        verbose_name_plural = "Users"
+    # class Meta:
+    #     verbose_name_plural = "Users"
+
 
     def __str__(self):
         return self.email
+
+
+class ManagerTeamEmployee(Employee):
+    """Modèle pour les employés de l'équipe de management."""
+    pass
+
+
+class SalesTeamEmployee(Employee):
+    """Modèle pour les employés de l'équipe de ventes."""
+    pass
+
+
+class SupportTeamEmployee(Employee):
+    """Modèle poure les employés de l'équipe de support."""
+    pass

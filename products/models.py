@@ -21,10 +21,11 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from accounts.models import SupportTeamEmployee
 from .errors_messages import MESS_VAL_ERR__END_EVENT_INF_START_EVENT
 from .validators import validate_contract_number_format, validate_datetime_no_past
 from additional_data.models import Location
-from persons.models import (Client, SupportTeamEmployee)
+from persons.models import Client
 
 
 def determine_a_next_contract_number():

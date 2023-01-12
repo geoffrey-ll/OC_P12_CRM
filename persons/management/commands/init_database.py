@@ -4,10 +4,9 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from accounts.models import MyUser
+from accounts.models import Employee, ManagerTeamEmployee, SupportTeamEmployee, SalesTeamEmployee
 from additional_data.models import Company, Location
-from persons.models import (Client, ManagerTeamEmployee, Prospect,
-                            SalesTeamEmployee, SupportTeamEmployee)
+from persons.models import (Client, Prospect)
 from products.models import Contract, Event
 
 
@@ -17,34 +16,40 @@ UserModel = get_user_model()
 DEV_USER = {
     "email": "dev@dev.com",
     "team": "WM",
-    "password": "dddd__8888"
+    "password": "dddd__8888",
+    "first_name": "dev",
+    "last_name": "dev",
+    "phone": "1234567890"
 }
 
 ACCOUNTS = [
     {
         "email": "manager01@manager01.com",
         "team": "MA",
-        "password": "manager01manager01"
+        "password": "manager01manager01",
+        "first_name": "manager01",
+        "last_name": "manager01",
+        "phone": "1234567890"
     },
     {
         "email": "sales01@sales01.com",
         "team": "SA",
-        "password": "sales01sales01"
+        "password": "sales01sales01",
+        "first_name": "sales01",
+        "last_name": "sales01",
+        "phone": "1234567890"
     },
     {
         "email": "support01@support01.com",
         "team": "SU",
-        "password": "support01support01"
+        "password": "support01support01",
+        "first_name": "support01",
+        "last_name": "support01",
+        "phone": "1234567890"
     }
 
 ]
 
-# {
-#     "first_name": "",
-#     "last_name": "",
-#     "phone": "",
-#     "account": ""
-# }
 
 PERSONS = {
     "manager":
@@ -114,7 +119,7 @@ class Command(BaseCommand):
         ManagerTeamEmployee.objects.all().delete()
         SalesTeamEmployee.objects.all().delete()
         SupportTeamEmployee.objects.all().delete()
-        MyUser.objects.all().exclude(id=1).delete()
+        Employee.objects.all().exclude(id=1).delete()
         Location.objects.all().delete()
         Company.objects.all().delete()
 
@@ -123,32 +128,37 @@ class Command(BaseCommand):
         self.stdout.write(self.style.MIGRATE_HEADING(self.help))
         self.delete_databse()
         try:
-            MyUser.objects.get(email=DEV_USER["email"])
+            Employee.objects.get(email=DEV_USER["email"])
         except:
             UserModel.objects.create_superuser(
-                DEV_USER["email"], DEV_USER["team"], DEV_USER["password"])
+                DEV_USER["email"], DEV_USER["team"],
+                DEV_USER["first_name"], DEV_USER["last_name"], DEV_USER["phone"],
+                DEV_USER["password"])
 
         for data_accounts in ACCOUNTS:
-            MyUser.objects.create(email=data_accounts["email"],
-                                  team=data_accounts["team"],
-                                  password=data_accounts["password"])
+            Employee.objects.create(email=data_accounts["email"],
+                                    team=data_accounts["team"],
+                                    first_name=data_accounts["first_name"],
+                                    last_name=data_accounts["last_name"],
+                                    phone=data_accounts["phone"],
+                                    password=data_accounts["password"])
 
-        account_manager = MyUser.objects.filter(team="MA").first()
-        account_sales = MyUser.objects.filter(team="SA").first()
-        account_support = MyUser.objects.filter(team="SU").first()
+        # account_manager = Employee.objects.filter(team="MA").first()
+        # account_sales = Employee.objects.filter(team="SA").first()
+        # account_support = Employee.objects.filter(team="SU").first()
 
-        ManagerTeamEmployee.objects.create(
-            first_name=PERSONS["manager"]["first_name"],
-            last_name=PERSONS["manager"]["last_name"],
-            phone=PERSONS["manager"]["phone"], account=account_manager)
-        SalesTeamEmployee.objects.create(
-            first_name=PERSONS["sales"]["first_name"],
-            last_name=PERSONS["sales"]["last_name"],
-            phone=PERSONS["sales"]["phone"], account=account_sales)
-        SupportTeamEmployee.objects.create(
-            first_name=PERSONS["support"]["first_name"],
-            last_name=PERSONS["support"]["last_name"],
-            phone=PERSONS["support"]["phone"], account=account_support)
+        ManagerTeamEmployee.objects.create()
+            # first_name=PERSONS["manager"]["first_name"],
+            # last_name=PERSONS["manager"]["last_name"],
+            # phone=PERSONS["manager"]["phone"])#, account=account_manager)
+        SalesTeamEmployee.objects.create()
+            # first_name=PERSONS["sales"]["first_name"],
+            # last_name=PERSONS["sales"]["last_name"],
+            # phone=PERSONS["sales"]["phone"])#, account=account_sales)
+        SupportTeamEmployee.objects.create()
+            # first_name=PERSONS["support"]["first_name"],
+            # last_name=PERSONS["support"]["last_name"],
+            # phone=PERSONS["support"]["phone"])#, account=account_support)
 
         person_sales = SalesTeamEmployee.objects.first()
         person_support = SupportTeamEmployee.objects.first()

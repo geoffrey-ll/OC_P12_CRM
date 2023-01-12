@@ -1,9 +1,13 @@
+from django import forms
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.forms import ModelForm
 
 from persons.models import (
-    Client, ManagerTeamEmployee, Prospect, SalesTeamEmployee,
-    SupportTeamEmployee, Person
+    Client, Prospect, Person
 )
+
+from accounts.models import ManagerTeamEmployee, SalesTeamEmployee, SupportTeamEmployee
 
 
 class ManagerTeamEmployeeAdmin(admin.ModelAdmin):
@@ -22,6 +26,7 @@ class ManagerTeamEmployeeAdmin(admin.ModelAdmin):
     # search_fields = ("email",)
     # ordering = ("email",)
     # filter_horizontal = ()
+
 
 
 class SalesTeamEmployeeAdmin(admin.ModelAdmin):
@@ -57,9 +62,9 @@ class ProspectAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(ManagerTeamEmployee, ManagerTeamEmployeeAdmin)
-admin.site.register(SalesTeamEmployee, SalesTeamEmployeeAdmin)
-admin.site.register(SupportTeamEmployee, SupportTeamEmployeeAdmin)
+# admin.site.register(ManagerTeamEmployee, ManagerTeamEmployeeAdmin)
+# admin.site.register(SalesTeamEmployee, SalesTeamEmployeeAdmin)
+# admin.site.register(SupportTeamEmployee, SupportTeamEmployeeAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Prospect, ProspectAdmin)
 # admin.site.register(Person)

@@ -1,6 +1,7 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
+from accounts.permissions import EventPermissions
 from .models import Contract, Event
 from .serializers import ContractSerializer, EventSerializer
 
@@ -14,6 +15,7 @@ class ContractViewSet(ModelViewSet):
 
 class EventViewSet(ModelViewSet):
     serializer_class = EventSerializer
+    permission_classes = [EventPermissions]
 
     def get_queryset(self):
         return Event.objects.all()
