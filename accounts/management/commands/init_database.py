@@ -1,7 +1,8 @@
-import os
 import glob
-from datetime import timedelta
+import os
+import sys
 
+from django.core.management import call_command, execute_from_command_line
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -13,27 +14,29 @@ from persons.models import (Client, Prospect)
 from products.models import Contract, Event
 
 
+Employee = get_user_model()
+
+
+DEFAULT_SUPERUSER = {
+    "email": "dev@dev.com",
+    "team": "WM",
+    "first_name": "dev",
+    "last_name": "dev",
+    "phone": 1234567890,
+    "password": "dddd__8888"
+}
+
+
 class Command(BaseCommand):
 
-    help = "Test for command development."
+    help = "Initialise a database for test development."
 
-    # @staticmethod
-    # def get_app_created():
-    #     app_dependencies_n_settings = [
-    #         ".idea", ".git", "django", "rest_framework",
-    #         "rest_framework_simplejwt", "CRM_EPIC_Events",
-    #         "venv", "readme_png"
-    #     ]
-    #     app_created = []
-    #     for app in PROJECT_APPS:
-    #         for app_d_n_s in app_dependencies_n_settings:
-    #             if app != app_d_n_s:
-    #                 app_created.append(app)
-    #     return app_created
+    def add_arguments(self, parser):
+        parser.add_argument("--default", action="store_true",
+                            help="Create the default superuser : dev.")
 
     @staticmethod
     def delete_migrations():
-        # apps = self.get_app_created()
         for app in PROJECT_APPS:
             path_migrations_dir = f"{app}/migrations"
             if os.path.exists(path_migrations_dir):
@@ -41,6 +44,7 @@ class Command(BaseCommand):
                 for migration_file in migrations_files:
                     if migration_file != f"{path_migrations_dir}/__init__.py":
                         os.remove(f"{migration_file}")
+        # print(f"=> Migrations deleted")
 
     @staticmethod
     def delete_database():
@@ -51,25 +55,39 @@ class Command(BaseCommand):
                                             recursive=True))
         for database_file in database_files:
             os.remove(f"{database_file}")
+        # print(f"=> Database deleted")
+
+    @staticmethod
+    def create_default_superuser():
+        Employee.objects.create_superuser(*DEFAULT_SUPERUSER.values())
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.MIGRATE_HEADING(self.help))
+
         self.delete_migrations()
+        self.stdout.write(self.style.MIGRATE_HEADING("=> Migrations deleted\n"))
         self.delete_database()
+        self.stdout.write(self.style.MIGRATE_HEADING("=> Database deleted\n"))
+        call_command("makemigrations")
+        self.stdout.write(self.style.MIGRATE_HEADING("=> Makemigrations: ok\n"))
+        call_command("migrate")
+        self.stdout.write(self.style.MIGRATE_HEADING("=> Migrate: ok\n"))
+        if options["default"]:
+            self.create_default_superuser()
+            self.stdout.write(
+                self.style.MIGRATE_HEADING("=> Superuser dev created"))
+            # call_command("createsuperuser",
+            #     email=SUPERUSER["email"],
+            #     team=SUPERUSER["team"], first_name=SUPERUSER["first_name"],
+            #     last_name=SUPERUSER["last_name"], phone=SUPERUSER["phone"]
+            # )
+        else:
+            call_command("createsuperuser")
+            self.stdout.write(
+                self.style.MIGRATE_HEADING("=> Superuser created"))
 
 
 
-# UserModel = get_user_model()
-#
-# DEV_USER = {
-#     "email": "dev@dev.com",
-#     "team": "WM",
-#     "password": "dddd__8888",
-#     "first_name": "dev",
-#     "last_name": "dev",
-#     "phone": "1234567890"
-# }
-#
 # ACCOUNTS = [
 #     {
 #         "email": "manager01@manager01.com",

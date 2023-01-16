@@ -16,7 +16,6 @@ class MyUserManager(BaseUserManager):
             raise ValueError('Users must have an email address')
         if not team:
             raise ValueError("Users must have a team")
-
         user = self.model(
             email=self.normalize_email(email), team=team,
             first_name=first_name, last_name=last_name, phone=phone)
@@ -27,7 +26,7 @@ class MyUserManager(BaseUserManager):
         return user
 
     def create_superuser(
-            self, email, team, first_name, last_name, phone, password=None):
+            self, email, team, first_name, last_name, phone, password=None, *args):
         user = self.create_user(
             email, team=team, password=password,
             first_name=first_name, last_name=last_name, phone=phone)
