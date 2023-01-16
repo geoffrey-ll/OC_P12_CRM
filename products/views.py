@@ -1,21 +1,30 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
-from accounts.permissions import EventPermissions
+from accounts.permissions import ContractPermission, EventPermission
 from .models import Contract, Event
 from .serializers import ContractSerializer, EventSerializer
+from accounts.models import SalesTeamEmployee
 
 
 class ContractViewSet(ModelViewSet):
     serializer_class = ContractSerializer
+    permission_classes = [ContractPermission]
 
     def get_queryset(self):
-        return Contract.objects.all()
+        all = self.request.query_params.get("all")
+        if all:
+            return Contract.objects.all()
+        else:
+            print(f"\n\nTEST\n{isinstance(self.request.user, SalesTeamEmployee)}")
+            print(f"\n\nTest\n{self.request.user}\n")
+            return Contract.objects.filter(
+                client__id_sales_employee=self.request.user)
 
 
 class EventViewSet(ModelViewSet):
     serializer_class = EventSerializer
-    permission_classes = [EventPermissions]
+    permission_classes = [EventPermission]
 
     def get_queryset(self):
         user = self.request.user

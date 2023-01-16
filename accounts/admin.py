@@ -105,14 +105,14 @@ class ManagerTeamChangeForm(TestChangeForm):
 
     def save(self, commit=True, *args, **kwargs):
         user = super().save(commit=False)
-        TEST02 = ManagerTeamEmployee.objects.filter(id=user.id)
-        TEST02.delete()
+        ManagerTeamEmployee.objects.filter(id=user.id).delete(keep_parents=True)
+        # TEST02.delete(keep_parents=True)
+        # TEST02.save()
         create_user_in_corresponding_team_table(user)
-        TEST01 = ManagerTeamEmployee.objects.all()
+        # TEST01 = ManagerTeamEmployee.objects.all()
         print(f"\n\nuser{user}\n")
         print(f"\n\nuser.id\n{user.id}\n")
-        print(f"\n\nTEST01\n{TEST01}\n")
-        print(f"\n\nTEST02\n{TEST02}\n")
+        # print(f"\n\nTEST01\n{TEST01}\n")
         return user
 
 
