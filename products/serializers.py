@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 from .models import Contract, Event
+from CRM_EPIC_Events.commons_functions import datetime_to_representation
 
 
 class ContractSerializer(ModelSerializer):
@@ -28,4 +29,12 @@ class EventSerializer(ModelSerializer):
         ret = super().to_representation(instance)
         ret["support_employee"] = instance.support_employee.__str__()
         ret["contract"] = instance.contract.__str__()
+        datetime_fields = [
+            ("start_event", instance.start_event),
+            ("end_event", instance.end_event),
+            ("date_created", instance.date_created),
+            ("date_updated", instance.date_updated)
+        ]
+        for datetime_field in datetime_fields:
+            ret[datetime_field[0]] = datetime_to_representation(datetime_field[1])
         return ret

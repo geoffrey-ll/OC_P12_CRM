@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
 
 from accounts.managers import MyUserManager
 
@@ -14,7 +15,7 @@ class Person(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.last_name} {self.first_name}"
+        return f"{self.last_name.upper()} {self.first_name}"
 
     class Meta:
         abstract = True
@@ -55,9 +56,8 @@ class Employee(AbstractBaseUser, Person):
     # class Meta:
     #     verbose_name_plural = "Users"
 
-
     def __str__(self):
-        return self.email
+        return f"{self.id} : {self.last_name.upper()} {self.first_name}"
 
 
 class ManagerTeamEmployee(Employee):

@@ -18,7 +18,17 @@ class EventViewSet(ModelViewSet):
     permission_classes = [EventPermissions]
 
     def get_queryset(self):
+        user = self.request.user
+        user_team = user.team
         return Event.objects.all()
+        # if user_team == "MA" or user_team == "WM":
+        #     return Event.objects.all()
+        # else:
+        #     if user_team == "SU":
+        #         return Event.objects.filter(support_employee=user.id)
+        #     elif user_team == "SA":
+        #         return Event.objects.filter(
+        #             contract__client__id_sales_employee=user.id)
 
     def create(self, request, *args, **kwargs):
         try:

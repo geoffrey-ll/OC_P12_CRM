@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from CRM_EPIC_Events.settings import INSTALLED_APPS
+from CRM_EPIC_Events.settings import PROJECT_APPS
 from accounts.models import Employee, ManagerTeamEmployee, SupportTeamEmployee, SalesTeamEmployee
 from additional_data.models import Company, Location
 from persons.models import (Client, Prospect)
@@ -17,24 +17,24 @@ class Command(BaseCommand):
 
     help = "Test for command development."
 
-    @staticmethod
-    def get_app_created():
-        app_dependencies_n_settings = [
-            ".idea", ".git", "django", "rest_framework",
-            "rest_framework_simplejwt", "CRM_EPIC_Events",
-            "venv", "readme_png"
-        ]
-        app_created = []
-        for app in INSTALLED_APPS:
-            for app_d_n_s in app_dependencies_n_settings:
-                if app != app_d_n_s:
-                    app_created.append(app)
-        return app_created
+    # @staticmethod
+    # def get_app_created():
+    #     app_dependencies_n_settings = [
+    #         ".idea", ".git", "django", "rest_framework",
+    #         "rest_framework_simplejwt", "CRM_EPIC_Events",
+    #         "venv", "readme_png"
+    #     ]
+    #     app_created = []
+    #     for app in PROJECT_APPS:
+    #         for app_d_n_s in app_dependencies_n_settings:
+    #             if app != app_d_n_s:
+    #                 app_created.append(app)
+    #     return app_created
 
     @staticmethod
-    def delete_migrations(apps):
+    def delete_migrations():
         # apps = self.get_app_created()
-        for app in apps:
+        for app in PROJECT_APPS:
             path_migrations_dir = f"{app}/migrations"
             if os.path.exists(path_migrations_dir):
                 migrations_files = glob.glob(f"{path_migrations_dir}/*.py")
@@ -54,8 +54,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.MIGRATE_HEADING(self.help))
-        apps_created = self.get_app_created()
-        self.delete_migrations(apps_created)
+        self.delete_migrations()
         self.delete_database()
 
 

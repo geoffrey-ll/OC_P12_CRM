@@ -33,20 +33,28 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
+
+DEPENDENCIES_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
+]
+
+PROJECT_APPS = [
     "accounts",
     "additional_data",
     "persons",
     "products",
 ]
+
+INSTALLED_APPS = DJANGO_APPS + DEPENDENCIES_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -122,6 +130,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+# EN UTILISANT DATETIME_FORMAT, LES DATETIME NE SONT PLUS EN TZ+0100 (HEURE DE PARIS), MAIS EN TZ+0000 (HEURE DE LONDRES).
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -132,3 +142,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    # "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 5,
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    # ],
+}

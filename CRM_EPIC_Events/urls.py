@@ -27,6 +27,8 @@ from products.views import ContractViewSet, EventViewSet
 router = routers.SimpleRouter()
 router.register("events", EventViewSet, basename="events")
 router.register("contracts", ContractViewSet, basename="contracts")
+# router.register("companies", CompaniesViewSet, basename="companies")
+# router.register("locations", LocationsViewSet, basename="locations")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

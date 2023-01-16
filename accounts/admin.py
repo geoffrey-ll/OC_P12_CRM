@@ -36,9 +36,11 @@ class TestCreationForm(UserCreationForm):
         # Save the provided password in hashed format
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        print(f"\n\nTestCreation\n{user.team}\n")
         user.is_admin = determine_is_admin_status(user.team)
-        user.save()
-        create_user_in_corresponding_team_table(user)
+        if commit:
+            user.save()
+        # create_user_in_corresponding_team_table(user)
         return user
 
 
@@ -94,6 +96,8 @@ class ManagerTeamCreationForm(TestCreationForm):
         print(f"\n\nPasse dans ManagerCreationForm.save\n")
         user = super().save(commit=False)
         user.team = "MA"
+        user.is_admin = determine_is_admin_status(user.team)
+        print(f"\n\nManagerCreation\n{user.team}\n")
         return user
 
 
@@ -124,11 +128,86 @@ class ManagerTeamAdmin(UserAdmin):
     )
 
 
+class SalesTeamCreationForm(TestCreationForm):
+
+    def save(self, commit=True, *args, **kwargs):
+        print(f"\n\nPasse dans SalesCreationForm.save\n")
+        user = super().save(commit=False)
+        user.team = "SA"
+        user.is_admin = determine_is_admin_status(user.team)
+        print(f"\n\nSalesCreation\n{user.team}\n")
+        return user
+
+
+class SalesTeamChangeForm(TestChangeForm):
+
+    def save(self, commit=True, *args, **kwargs):
+        user = super().save(commit=False)
+        TEST02 = SalesTeamEmployee.objects.filter(id=user.id)
+        TEST02.delete()
+        create_user_in_corresponding_team_table(user)
+        TEST01 = SalesTeamEmployee.objects.all()
+        print(f"\n\nuser{user}\n")
+        print(f"\n\nuser.id\n{user.id}\n")
+        print(f"\n\nTEST01\n{TEST01}\n")
+        print(f"\n\nTEST02\n{TEST02}\n")
+        return user
+
+
+class SalesTeamAdmin(UserAdmin):
+    add_form = SalesTeamCreationForm
+    form = SalesTeamChangeForm
+
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": ("email", "password1", "password2", "first_name", "last_name", "phone"),
+        }),
+    )
+
+
+class SupportTeamCreationForm(TestCreationForm):
+
+    def save(self, commit=True, *args, **kwargs):
+        print(f"\n\nPasse dans SupportCreationForm.save\n")
+        user = super().save(commit=False)
+        user.team = "SU"
+        user.is_admin = determine_is_admin_status(user.team)
+        print(f"\n\nSupportCreation\n{user.team}\n")
+        return user
+
+
+class SupportTeamChangeForm(TestChangeForm):
+
+    def save(self, commit=True, *args, **kwargs):
+        user = super().save(commit=False)
+        TEST02 = SupportTeamEmployee.objects.filter(id=user.id)
+        TEST02.delete()
+        create_user_in_corresponding_team_table(user)
+        TEST01 = SupportTeamEmployee.objects.all()
+        print(f"\n\nuser{user}\n")
+        print(f"\n\nuser.id\n{user.id}\n")
+        print(f"\n\nTEST01\n{TEST01}\n")
+        print(f"\n\nTEST02\n{TEST02}\n")
+        return user
+
+
+class SupportTeamAdmin(UserAdmin):
+    add_form = SupportTeamCreationForm
+    form = SupportTeamChangeForm
+
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": ("email", "password1", "password2", "first_name", "last_name", "phone"),
+        }),
+    )
+
 # Now register the new UserAdmin...
 admin.site.register(Employee, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.register(ManagerTeamEmployee, ManagerTeamAdmin)
-admin.site.register(SalesTeamEmployee, UserAdmin)
-admin.site.register(SupportTeamEmployee, UserAdmin)
+admin.site.register(SalesTeamEmployee, SalesTeamAdmin)
+admin.site.register(SupportTeamEmployee, SupportTeamAdmin)
 admin.site.unregister(Group)
