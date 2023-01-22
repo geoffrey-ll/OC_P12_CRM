@@ -23,7 +23,7 @@ class ContractPermission(BasePermission):
         else:
             pk_contract = view.kwargs.get("pk")
             contract = Contract.objects.get(id=pk_contract)
-            if user.team == "SA" and contract.client.id_sales_employee.id == user.id:
+            if user.team == "SA" and contract.client.sales_employee.id == user.id:
                 return True
             else:
                 return request.method in SAFE_METHODS
@@ -74,7 +74,7 @@ class CompanyPermission(BasePermission):
         else:
             if user.team == "SA":
                 clients_handle = Client.objects.filter(id_sales_employee=user)
-                if obj.id in [client.id_company.id for client in clients_handle]:
+                if obj.id in [client.company.id for client in clients_handle]:
                     return True
                 else:
                     return request.method in SAFE_METHODS
@@ -99,8 +99,8 @@ class LocationPermission(BasePermission):
                 locations_of_events, locations_of_clients = \
                     get_locations_of_clients_and_events(user)
                 if user.team == "SA" \
-                        and obj.id_company in [location.id_company
-                                               for location in locations_of_clients]:
+                        and obj.company in [location.company
+                                            for location in locations_of_clients]:
                     return True
                 if user.team == "SU" \
                         and obj.id in [location.id

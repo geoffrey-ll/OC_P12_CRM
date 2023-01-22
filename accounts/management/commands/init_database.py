@@ -1,6 +1,7 @@
 import glob
 import os
 import sys
+import subprocess
 
 from django.core.management import call_command, execute_from_command_line
 from django.core.management.base import BaseCommand
@@ -26,6 +27,50 @@ DEFAULT_SUPERUSER = {
     "password": "dddd__8888"
 }
 
+DATA_FOR_DEVELOPMENT = {
+    "accounts": {
+        "manager": {
+            "email": ["manager01@manager01.com", "manager02@manager02.com", "manager03@manager03.com"],
+        },
+        "sales": {
+
+        },
+        "support": {
+
+        }
+    },
+    "persons": {
+        "client": {
+
+        },
+        "prospect": {
+
+        }
+    },
+    "products": {
+        "contract": {
+
+        },
+        "event": {
+
+        }
+    },
+    "additional_data": {
+        "company": {
+
+        },
+        "location": {
+
+        }
+    },
+    "key": {}
+}
+
+DATA_COMPANIES = {
+    "siren": [123456789, 123456788, 123456787],
+    "name": ["company01", "company02", "company03"],
+    "designation": ["company01", "company02", "company03"]
+}
 
 class Command(BaseCommand):
 
@@ -61,6 +106,45 @@ class Command(BaseCommand):
     def create_default_superuser():
         Employee.objects.create_superuser(*DEFAULT_SUPERUSER.values())
 
+    @staticmethod
+    def create_employees():
+        TEAM_EMPLOYEE = ["manager", "sales", "support"]
+        for TEAM in TEAM_EMPLOYEE:
+            for i in range(1, 4):
+                count = str(i).zfill(2)
+                name = f"{TEAM}{count}"
+                data = {
+                    "email": f"{name}@{name}.com",
+                    "team": f"{TEAM[0:2].upper()}",
+                    "first_name": f"{name}",
+                    "last_name": f"{name}",
+                    "phone": 1234567890,
+                    "password": f"{name*4}"
+                }
+                if TEAM == "manager":
+                    ManagerTeamEmployee.objects.create_user(*data.values())
+                elif TEAM == "sales":
+                    SalesTeamEmployee.objects.create_user(*data.values())
+                elif TEAM == "support":
+                    SupportTeamEmployee.objects.create_user(*data.values())
+
+    # @staticmethod
+    # def create_additional_data():
+    #     for i in range(1, 4):
+    #         count = str(i).zfill(2)
+    #         name = f"company{count}"
+    #         data = {
+    #             "siren": 999999999 - i,
+    #             "name": name,
+    #             "designation": name
+    #         }
+    #         Company.objects.create(*data.values())
+
+    def create_database(self):
+        self.create_employees()
+        # self.create_additional_data()
+        # self.create.persons()
+
     def handle(self, *args, **options):
         self.stdout.write(self.style.MIGRATE_HEADING(self.help))
 
@@ -75,16 +159,20 @@ class Command(BaseCommand):
         if options["default"]:
             self.create_default_superuser()
             self.stdout.write(
-                self.style.MIGRATE_HEADING("=> Superuser dev created"))
+                self.style.MIGRATE_HEADING("=> Superuser created : dev"))
             # call_command("createsuperuser",
-            #     email=SUPERUSER["email"],
-            #     team=SUPERUSER["team"], first_name=SUPERUSER["first_name"],
-            #     last_name=SUPERUSER["last_name"], phone=SUPERUSER["phone"]
-            # )
+            #              f"{DEFAULT_SUPERUSER.keys()}"=DEFAULT_SUPERUSER.values())
+            # call_command("createsuperuser",
+            #              *DEFAULT_SUPERUSER.keys(), **DEFAULT_SUPERUSER.values())
         else:
             call_command("createsuperuser")
             self.stdout.write(
                 self.style.MIGRATE_HEADING("=> Superuser created"))
+
+        self.create_database()
+
+
+        # call_command("runserver")
 
 
 
@@ -169,92 +257,3 @@ class Command(BaseCommand):
 #
 #
 # EVENTS = {
-# }
-#
-#
-# class Command(BaseCommand):
-#
-#     help = "Initialize database for local development"
-#
-#     @staticmethod
-#     def delete_databse():
-#         Event.objects.all().delete()
-#         Contract.objects.all().delete()
-#         Client.objects.all().delete()
-#         Prospect.objects.all().delete()
-#         ManagerTeamEmployee.objects.all().delete()
-#         SalesTeamEmployee.objects.all().delete()
-#         SupportTeamEmployee.objects.all().delete()
-#         Employee.objects.all().exclude(id=1).delete()
-#         Location.objects.all().delete()
-#         Company.objects.all().delete()
-#
-#
-#     def handle(self, *args, **options):
-#         self.stdout.write(self.style.MIGRATE_HEADING(self.help))
-#         self.delete_databse()
-#         try:
-#             Employee.objects.get(email=DEV_USER["email"])
-#         except:
-#             UserModel.objects.create_superuser(
-#                 DEV_USER["email"], DEV_USER["team"],
-#                 DEV_USER["first_name"], DEV_USER["last_name"], DEV_USER["phone"],
-#                 DEV_USER["password"])
-#
-#         for data_accounts in ACCOUNTS:
-#             Employee.objects.create(email=data_accounts["email"],
-#                                     team=data_accounts["team"],
-#                                     first_name=data_accounts["first_name"],
-#                                     last_name=data_accounts["last_name"],
-#                                     phone=data_accounts["phone"],
-#                                     password=data_accounts["password"])
-#
-#         # account_manager = Employee.objects.filter(team="MA").first()
-#         # account_sales = Employee.objects.filter(team="SA").first()
-#         # account_support = Employee.objects.filter(team="SU").first()
-#
-#         ManagerTeamEmployee.objects.create()
-#             # first_name=PERSONS["manager"]["first_name"],
-#             # last_name=PERSONS["manager"]["last_name"],
-#             # phone=PERSONS["manager"]["phone"])#, account=account_manager)
-#         SalesTeamEmployee.objects.create()
-#             # first_name=PERSONS["sales"]["first_name"],
-#             # last_name=PERSONS["sales"]["last_name"],
-#             # phone=PERSONS["sales"]["phone"])#, account=account_sales)
-#         SupportTeamEmployee.objects.create()
-#             # first_name=PERSONS["support"]["first_name"],
-#             # last_name=PERSONS["support"]["last_name"],
-#             # phone=PERSONS["support"]["phone"])#, account=account_support)
-#
-#         person_sales = SalesTeamEmployee.objects.first()
-#         person_support = SupportTeamEmployee.objects.first()
-#
-#         Company.objects.create(siren=COMPANIES["siren"], name=COMPANIES["name"])
-#         company = Company.objects.first()
-#
-#         Location.objects.create(id_company=company, nic=LOCATIONS["nic"],
-#                                 designation=company.name,
-#                                 street_number=LOCATIONS["street_number"],
-#                                 bis_ter=LOCATIONS["bis_ter"],
-#                                 street_name=LOCATIONS["street_name"],
-#                                 zip_code=LOCATIONS["zip_code"],
-#                                 town_name=LOCATIONS["town_name"])
-#
-#         Client.objects.create( first_name=PERSONS["client"]["first_name"],
-#                                last_name=PERSONS["client"]["last_name"],
-#                                phone=PERSONS["client"]["phone"],
-#                                id_sales_employee=person_sales,
-#                                id_company=company)
-#         Prospect.objects.create(first_name=PERSONS["prospect"]["first_name"],
-#                                 last_name=PERSONS["prospect"]["last_name"],
-#                                 phone=PERSONS["prospect"]["phone"],
-#                                 id_last_sales_employee_contact=person_sales)
-#
-#         Contract.objects.create(client=Client.objects.first())
-#         Event.objects.create(support_employee=person_support,
-#                              contract=Contract.objects.first(),
-#                              location=Location.objects.first(),
-#                              end_event=timezone.now() + timedelta(hours=4),
-#                              attendees=2)
-#
-#     print(f"\n\nJe suis bien là\n")

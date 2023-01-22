@@ -24,11 +24,11 @@ class CompanyViewSet(ModelViewSet):
         elif user.team == "SA":
             clients_handle = get_clients_handle(user)
             return Company.objects.filter(
-                id__in=[client.id_company.id for client in clients_handle])
+                id__in=[client.company.id for client in clients_handle])
         elif user.team == "SU":
             events_handle = get_events_handle(user)
             return Company.objects.filter(
-                id__in=[event.contract.client.id_company.id
+                id__in=[event.contract.client.company.id
                         for event in events_handle])
 
     # def perform_create(self, serializer):

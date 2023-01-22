@@ -39,5 +39,5 @@ def get_locations_of_clients_and_events(user):
     locations_of_events = Location.objects.filter(
         id__in=[event.location.id for event in events])
     locations_of_clients = Location.objects.filter(
-        id_company__in=[client.id_company for client in clients])
+        id_company__in=[client.company for client in clients])
     return locations_of_events, locations_of_clients
