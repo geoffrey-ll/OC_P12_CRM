@@ -117,6 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = "accounts.Employee"
+ADMIN_TEAM = ["WM", "MA"]
 # AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 # Internationalization
@@ -148,6 +149,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 5,
     # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    #     'rest_framework.permissions.IsAuthenticated',
     # ],
 }

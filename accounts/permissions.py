@@ -1,57 +1,110 @@
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+from CRM_EPIC_Events.commons_functions import get_locations_of_clients_and_events
+from CRM_EPIC_Events.settings import ADMIN_TEAM
+from additional_data.models import Company, Location
+from persons.models import Client
 from products.models import Contract, Event
-
-
-def check_authenticated(request):
-    if not request.user.is_authenticated:
-        raise NotAuthenticated(detail="Dois être login.")
 
 
 class ContractPermission(BasePermission):
 
     def has_permission(self, request, view):
-        check_authenticated(request)
+        user = request.user
+        if user.team == "SU":
+            return request.method in SAFE_METHODS
         return True
 
     def has_object_permission(self, request, view, obj):
-        check_authenticated(request)
-
         user = request.user
-        user_team = user.team
-        if user_team == "WM":
+        if user.team in ADMIN_TEAM:
             return True
         else:
             pk_contract = view.kwargs.get("pk")
             contract = Contract.objects.get(id=pk_contract)
-            if user_team == "SA":
-                return contract.client.id_sales_employee.id == user.id
-            if user_team == "SU":
-                return False
+            if user.team == "SA" and contract.client.id_sales_employee.id == user.id:
+                return True
+            else:
+                return request.method in SAFE_METHODS
 
 
 class EventPermission(BasePermission):
 
     def has_permission(self, request, view):
-        check_authenticated(request)
+        user = request.user
+        if not view.detail and user.team == "SU":
+            return request.method in SAFE_METHODS
         return True
 
-
     def has_object_permission(self, request, view, obj):
-        check_authenticated(request)
-
         user = request.user
-        user_team = user.team
-        if user_team == "WM":
+        if user.team in ADMIN_TEAM:
             return True
         else:
             pk_event = view.kwargs.get("pk")
             event = Event.objects.get(id=pk_event)
-            if user_team == "SU":
-                print(f"\n\nTEST\n{event.support_employee.id == user.id}\n")
-                return event.support_employee.id == user.id
-            if user_team == "SA":
-                return event.contract.client.id_sales_employee.id == user.id
+            if user.team == "SU" and event.support_employee.id == user.id:
+                return True
+            else:
+                return request.method in SAFE_METHODS
 
-        return False
+
+class PersonPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        return True
+
+
+class CompanyPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        user = request.user
+        if user.team == "SU":
+            return request.method in SAFE_METHODS
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
+        else:
+            if user.team == "SA":
+                clients_handle = Client.objects.filter(id_sales_employee=user)
+                if obj.id in [client.id_company.id for client in clients_handle]:
+                    return True
+                else:
+                    return request.method in SAFE_METHODS
+            else:
+                return request.method in SAFE_METHODS
+
+
+class LocationPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        user = request.user
+        if not view.detail and user.team == "SU":
+            return request.method in SAFE_METHODS
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
+        else:
+            if user.team == "SA" or user.team == "SU":
+                locations_of_events, locations_of_clients = \
+                    get_locations_of_clients_and_events(user)
+                if user.team == "SA" \
+                        and obj.id_company in [location.id_company
+                                               for location in locations_of_clients]:
+                    return True
+                if user.team == "SU" \
+                        and obj.id in [location.id
+                                       for location in locations_of_events]:
+                    return True
+                else:
+                    return request.method in SAFE_METHODS

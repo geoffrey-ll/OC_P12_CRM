@@ -1,6 +1,8 @@
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from CRM_EPIC_Events.settings import ADMIN_TEAM
 from accounts.permissions import ContractPermission, EventPermission
 from .models import Contract, Event
 from .serializers import ContractSerializer, EventSerializer
@@ -8,36 +10,49 @@ from accounts.models import SalesTeamEmployee
 
 
 class ContractViewSet(ModelViewSet):
+
     serializer_class = ContractSerializer
-    permission_classes = [ContractPermission]
-
-    def get_queryset(self):
-        all = self.request.query_params.get("all")
-        if all:
-            return Contract.objects.all()
-        else:
-            print(f"\n\nTEST\n{isinstance(self.request.user, SalesTeamEmployee)}")
-            print(f"\n\nTest\n{self.request.user}\n")
-            return Contract.objects.filter(
-                client__id_sales_employee=self.request.user)
-
-
-class EventViewSet(ModelViewSet):
-    serializer_class = EventSerializer
-    permission_classes = [EventPermission]
+    permission_classes = [IsAuthenticated, ContractPermission]
 
     def get_queryset(self):
         user = self.request.user
-        user_team = user.team
-        return Event.objects.all()
-        # if user_team == "MA" or user_team == "WM":
-        #     return Event.objects.all()
-        # else:
-        #     if user_team == "SU":
-        #         return Event.objects.filter(support_employee=user.id)
-        #     elif user_team == "SA":
-        #         return Event.objects.filter(
-        #             contract__client__id_sales_employee=user.id)
+        all = self.request.query_params.get("all")
+        if all or user.team in ADMIN_TEAM:
+            return Contract.objects.all()
+        elif user.team == "SU":
+            events_handle = Event.objects.filter(support_employee=user)
+            return Contract.objects.filter(
+                contract_number__in=[
+                    event.contract.contract_number for event in events_handle])
+        else:
+            return Contract.objects.filter(
+                client__id_sales_employee=self.request.user)
+
+    def perform_create(self, serializer):
+        pass
+
+    def perform_update(self, serializer):
+        pass
+
+    def perform_destroy(self, instance):
+        pass
+
+
+class EventViewSet(ModelViewSet):
+
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated, EventPermission]
+
+    def get_queryset(self):
+        user = self.request.user
+        all = self.request.query_params.get("all")
+        if all or user.team in ADMIN_TEAM:
+            return Event.objects.all()
+        elif user.team == "SU":
+            return Event.objects.filter(support_employee=user)
+        elif user.team == "SA":
+            return Event.objects.filter(
+                contract__client__id_sales_employee=user)
 
     def create(self, request, *args, **kwargs):
         try:
@@ -45,3 +60,12 @@ class EventViewSet(ModelViewSet):
 
         except Exception as e:
             raise ValidationError(str(e))
+
+    def perform_create(self, serializer):
+        pass
+
+    def perform_update(self, serializer):
+        pass
+
+    def perform_destroy(self, instance):
+        pass

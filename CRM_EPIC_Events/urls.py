@@ -21,14 +21,17 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
 from accounts.views import AccountView
+from additional_data.views import CompanyViewSet, LocationViewSet
+from persons.views import PersonViewSet
 from products.views import ContractViewSet, EventViewSet
 
 
 router = routers.SimpleRouter()
 router.register("events", EventViewSet, basename="events")
 router.register("contracts", ContractViewSet, basename="contracts")
-# router.register("companies", CompaniesViewSet, basename="companies")
-# router.register("locations", LocationsViewSet, basename="locations")
+router.register("persons", PersonViewSet, basename="persons")
+router.register("companies", CompanyViewSet, basename="companies")
+router.register("locations", LocationViewSet, basename="locations")
 
 urlpatterns = [
     path("admin/", admin.site.urls),

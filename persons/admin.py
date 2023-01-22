@@ -49,9 +49,10 @@ class SupportTeamEmployeeAdmin(admin.ModelAdmin):
 
 class ClientAdmin(admin.ModelAdmin):
     """Représentation des objets Client dans l'administration Django."""
-    # list_display = ("id", "first_name", "last_name", "phone",
-    #                 "date_created", "date_updated",
-    #                 "id_company", "id_sales_team_employee")
+    list_display = ("id", "id_sales_employee",
+                    "first_name", "last_name", "phone",
+                    "date_created", "date_updated",
+                    "id_company")
 
 
 class ProspectAdmin(admin.ModelAdmin):

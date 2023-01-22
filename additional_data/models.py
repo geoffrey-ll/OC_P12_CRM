@@ -36,3 +36,6 @@ class Location(models.Model):
         SIRET est unique
         """
         pass
+
+    def __str__(self):
+        return f"{self.designation}"
