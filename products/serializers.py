@@ -10,8 +10,8 @@ class ContractSerializer(ModelSerializer):
         model = Contract
         fields = "__all__"
 
-    def to_representation(self, instance):
-        pass
+    # def to_representation(self, instance):
+    #     pass
 
 
 class EventSerializer(ModelSerializer):

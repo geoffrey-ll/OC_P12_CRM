@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Serializer
 
 from .models import Client, Prospect
 
@@ -9,8 +9,8 @@ class ClientSerializer(ModelSerializer):
         model = Client
         fields = "__all__"
 
-    def to_representation(self, instance):
-        pass
+    # def to_representation(self, instance):
+    #     pass
 
 
 class ProspectSerializer(ModelSerializer):
@@ -19,5 +19,9 @@ class ProspectSerializer(ModelSerializer):
         model = Prospect
         fields = "__all__"
 
-    def to_representation(self, instance):
-        pass
+    # def to_representation(self, instance):
+    #     pass
+
+class NotUserSerializer(ModelSerializer):
+    clients = ClientSerializer(many=True)
+    prospects = ProspectSerializer(many=True)

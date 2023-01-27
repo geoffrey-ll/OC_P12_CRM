@@ -15,6 +15,7 @@ Erreurs :
 """
 
 from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -23,6 +24,7 @@ from django.utils.translation import gettext_lazy as _
 
 from accounts.models import SupportTeamEmployee
 from .errors_messages import MESS_VAL_ERR__END_EVENT_INF_START_EVENT
+from .managers import ContractManager, EventManager
 from .validators import validate_contract_number_format, validate_datetime_no_past
 from additional_data.models import Location
 from persons.models import Client
@@ -69,9 +71,10 @@ class Contract(models.Model):
         validators=[validate_contract_number_format])
     amount = models.FloatField(default=0.00)
     payment_due = models.DateTimeField(blank=True, null=True)
-
     date_updated = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
+
+    objects = ContractManager()
 
     def __str__(self):
         """Représentation du modèle dans l'admin Django."""
@@ -121,6 +124,8 @@ class Event(models.Model):
     notes = models.TextField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+    objects = EventManager()
 
     def clean(self):
         """Validateur du modèle."""

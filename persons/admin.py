@@ -10,43 +10,6 @@ from persons.models import (
 from accounts.models import ManagerTeamEmployee, SalesTeamEmployee, SupportTeamEmployee
 
 
-class ManagerTeamEmployeeAdmin(admin.ModelAdmin):
-    """Représentation des objets ManagerTeamEmployee dans l'administration
-    Django.
-    """
-    list_display = ("__str__", "id",)
-    # list_display = ("id", "account_email", "first_name", "last_name", "phone",
-    #                 "date_created", "date_updated", "account_is_admin")
-    # list_filter = ("is_admin",)
-    # fieldsets = (
-    #     (None, {"fields": ("email", "password")}),
-    #     ("Personal info", {"fields": ("first_name", "last_name", "phone")}),
-    #     ("Permissions", {"fields": ("is_admin",)}),
-    # )
-    # search_fields = ("email",)
-    # ordering = ("email",)
-    # filter_horizontal = ()
-
-
-
-class SalesTeamEmployeeAdmin(admin.ModelAdmin):
-    """Représentation des objets SalesTeamEmployee dans l'administration
-    Django.
-    """
-    list_display = ("__str__", "id",)
-    # list_display = ("id", "account_email", "first_name", "last_name", "phone",
-    #                 "date_created", "date_updated", "account_is_admin")
-
-
-class SupportTeamEmployeeAdmin(admin.ModelAdmin):
-    """Représentation des objets SupportTeamEmployee dans l'administration
-    Django.
-    """
-    list_display = ("__str__", "id",)
-    # list_display = ("id", "account_email", "first_name", "last_name", "phone",
-    #                 "date_created", "date_updated", "account_is_admin")
-
-
 class ClientAdmin(admin.ModelAdmin):
     """Représentation des objets Client dans l'administration Django."""
     list_display = ("id", "sales_employee",
@@ -57,15 +20,13 @@ class ClientAdmin(admin.ModelAdmin):
 
 class ProspectAdmin(admin.ModelAdmin):
     """Représentation des objets Prospect dans l'administration Django."""
-    # list_display = ("id", "first_name", "last_name", "phone",
-    #                 "date_created", "date_updated",
-    #                 "company", "id_last_contact", "date_last_contact")
+    list_display = ("id", "last_sales_contacted", "date_last_contact",
+                    "first_name", "last_name", "phone",
+                    "date_created", "date_updated",
+                    "company")
 
 
 
-# admin.site.register(ManagerTeamEmployee, ManagerTeamEmployeeAdmin)
-# admin.site.register(SalesTeamEmployee, SalesTeamEmployeeAdmin)
-# admin.site.register(SupportTeamEmployee, SupportTeamEmployeeAdmin)
 admin.site.register(Client, ClientAdmin)
 admin.site.register(Prospect, ProspectAdmin)
 # admin.site.register(Person)

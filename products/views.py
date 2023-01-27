@@ -13,6 +13,8 @@ class ContractViewSet(ModelViewSet):
 
     serializer_class = ContractSerializer
     permission_classes = [IsAuthenticated, ContractPermission]
+    filterset_fields = ["closed"]
+    search_fields = ["closed"]
 
     def get_queryset(self):
         user = self.request.user
@@ -28,14 +30,14 @@ class ContractViewSet(ModelViewSet):
             return Contract.objects.filter(
                 client__id_sales_employee=self.request.user)
 
-    def perform_create(self, serializer):
-        pass
-
-    def perform_update(self, serializer):
-        pass
-
-    def perform_destroy(self, instance):
-        pass
+    # def perform_create(self, serializer):
+    #     pass
+    #
+    # def perform_update(self, serializer):
+    #     pass
+    #
+    # def perform_destroy(self, instance):
+    #     pass
 
 
 class EventViewSet(ModelViewSet):
@@ -61,11 +63,11 @@ class EventViewSet(ModelViewSet):
         except Exception as e:
             raise ValidationError(str(e))
 
-    def perform_create(self, serializer):
-        pass
-
-    def perform_update(self, serializer):
-        pass
-
-    def perform_destroy(self, instance):
-        pass
+    # def perform_create(self, serializer):
+    #     pass
+    #
+    # def perform_update(self, serializer):
+    #     pass
+    #
+    # def perform_destroy(self, instance):
+    #     pass

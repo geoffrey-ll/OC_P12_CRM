@@ -1,9 +1,9 @@
+from datetime import timedelta
 import glob
 import os
-import sys
-import subprocess
 
-from django.core.management import call_command, execute_from_command_line
+
+from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -27,50 +27,6 @@ DEFAULT_SUPERUSER = {
     "password": "dddd__8888"
 }
 
-DATA_FOR_DEVELOPMENT = {
-    "accounts": {
-        "manager": {
-            "email": ["manager01@manager01.com", "manager02@manager02.com", "manager03@manager03.com"],
-        },
-        "sales": {
-
-        },
-        "support": {
-
-        }
-    },
-    "persons": {
-        "client": {
-
-        },
-        "prospect": {
-
-        }
-    },
-    "products": {
-        "contract": {
-
-        },
-        "event": {
-
-        }
-    },
-    "additional_data": {
-        "company": {
-
-        },
-        "location": {
-
-        }
-    },
-    "key": {}
-}
-
-DATA_COMPANIES = {
-    "siren": [123456789, 123456788, 123456787],
-    "name": ["company01", "company02", "company03"],
-    "designation": ["company01", "company02", "company03"]
-}
 
 class Command(BaseCommand):
 
@@ -89,7 +45,6 @@ class Command(BaseCommand):
                 for migration_file in migrations_files:
                     if migration_file != f"{path_migrations_dir}/__init__.py":
                         os.remove(f"{migration_file}")
-        # print(f"=> Migrations deleted")
 
     @staticmethod
     def delete_database():
@@ -100,7 +55,6 @@ class Command(BaseCommand):
                                             recursive=True))
         for database_file in database_files:
             os.remove(f"{database_file}")
-        # print(f"=> Database deleted")
 
     @staticmethod
     def create_default_superuser():
@@ -108,8 +62,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def create_employees():
-        TEAM_EMPLOYEE = ["manager", "sales", "support"]
-        for TEAM in TEAM_EMPLOYEE:
+        TEAMS_EMPLOYEE = ["manager", "sales", "support"]
+        for TEAM in TEAMS_EMPLOYEE:
             for i in range(1, 4):
                 count = str(i).zfill(2)
                 name = f"{TEAM}{count}"
@@ -128,22 +82,78 @@ class Command(BaseCommand):
                 elif TEAM == "support":
                     SupportTeamEmployee.objects.create_user(*data.values())
 
-    # @staticmethod
-    # def create_additional_data():
-    #     for i in range(1, 4):
-    #         count = str(i).zfill(2)
-    #         name = f"company{count}"
-    #         data = {
-    #             "siren": 999999999 - i,
-    #             "name": name,
-    #             "designation": name
-    #         }
-    #         Company.objects.create(*data.values())
+    @staticmethod
+    def create_additional_data():
+        for i in range(1, 4):
+            count = str(i).zfill(2)
+
+            company_name = f"company{count}"
+            company_data = {
+                "siren": 999_999_999 - i,
+                "name": company_name,
+                "designation": company_name
+            }
+            Company.objects.create(*company_data.values())
+
+            location_name = f"location{count}"
+            location_data = {
+                "company": Company.objects.get(id=i),
+                "nic": 99_999 - i,
+                "designation": location_name,
+                "street_number": i + 1,
+                "street_name": f"street{count}",
+                "zip_code": 12345,
+                "town_name": f"town{count}",
+            }
+            Location.objects.create(*location_data.values())
+
+    @staticmethod
+    def create_clients_and_prospect():
+        CATEGORIES = ["client", "prospect"]
+        for category in CATEGORIES:
+            for i in range(1, 4):
+                count = str(i).zfill(2)
+                name = f"{category}{count}"
+
+                sales_employees = SalesTeamEmployee.objects.order_by("id")
+                data = {
+                    "first_name": name,
+                    "last_name": name,
+                    "phone": 11_23_45_67_89 - i,
+                    "sales_employee": sales_employees[i- 1]
+                }
+                if i // 2 == 0:
+                    data["company"] = Company.objects.get(id=i)
+
+                if category == "client":
+                    Client.objects.create(*data.values())
+                if category == "prospect":
+                    Prospect.objects.create(*data.values())
+
+    @staticmethod
+    def create_products():
+        for i in range(1, 4):
+            contract_data = {
+                "client": Client.objects.get(id=i),
+            }
+            Contract.objects.create(*contract_data.values())
+
+            support_employees = SupportTeamEmployee.objects.order_by("id")
+            event_data = {
+                "support_employee": support_employees[i - 1],
+                "contract": Contract.objects.get(id=i),
+                "location": Location.objects.get(id=i),
+                "end_event": timezone.now() + timedelta(hours=2 + i),
+                "attendee": i + 1,
+            }
+            Event.objects.create(*event_data.values())
+
 
     def create_database(self):
         self.create_employees()
-        # self.create_additional_data()
-        # self.create.persons()
+        self.create_additional_data()
+        self.create_clients_and_prospect()
+        self.create_products()
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.MIGRATE_HEADING(self.help))
@@ -156,104 +166,17 @@ class Command(BaseCommand):
         self.stdout.write(self.style.MIGRATE_HEADING("=> Makemigrations: ok\n"))
         call_command("migrate")
         self.stdout.write(self.style.MIGRATE_HEADING("=> Migrate: ok\n"))
+
         if options["default"]:
             self.create_default_superuser()
             self.stdout.write(
-                self.style.MIGRATE_HEADING("=> Superuser created : dev"))
-            # call_command("createsuperuser",
-            #              f"{DEFAULT_SUPERUSER.keys()}"=DEFAULT_SUPERUSER.values())
-            # call_command("createsuperuser",
-            #              *DEFAULT_SUPERUSER.keys(), **DEFAULT_SUPERUSER.values())
+                self.style.MIGRATE_HEADING("=> Superuser created : dev\n"))
         else:
             call_command("createsuperuser")
             self.stdout.write(
-                self.style.MIGRATE_HEADING("=> Superuser created"))
+                self.style.MIGRATE_HEADING("=> Superuser created\n"))
 
+        self.stdout.write(self.style.MIGRATE_HEADING(
+            "=> Creation of database in progress\n"))
         self.create_database()
-
-
-        # call_command("runserver")
-
-
-
-# ACCOUNTS = [
-#     {
-#         "email": "manager01@manager01.com",
-#         "team": "MA",
-#         "password": "manager01manager01",
-#         "first_name": "manager01",
-#         "last_name": "manager01",
-#         "phone": "1234567890"
-#     },
-#     {
-#         "email": "sales01@sales01.com",
-#         "team": "SA",
-#         "password": "sales01sales01",
-#         "first_name": "sales01",
-#         "last_name": "sales01",
-#         "phone": "1234567890"
-#     },
-#     {
-#         "email": "support01@support01.com",
-#         "team": "SU",
-#         "password": "support01support01",
-#         "first_name": "support01",
-#         "last_name": "support01",
-#         "phone": "1234567890"
-#     }
-#
-# ]
-#
-#
-# PERSONS = {
-#     "manager":
-#         {
-#             "first_name": "manager01",
-#             "last_name": "manager01",
-#             "phone": "1234567890",
-#             "account": ""
-#         },
-#     "sales":
-#         {
-#             "first_name": "sales01",
-#             "last_name": "sales01",
-#             "phone": "1234567890",
-#             "account": ""
-#         },
-#     "support":
-#         {
-#             "first_name": "support01",
-#             "last_name": "support01",
-#             "phone": "1234567890",
-#             "account": ""
-#         },
-#     "client":
-#         {
-#             "first_name": "client01",
-#             "last_name": "client01",
-#             "phone": "1234567890",
-#         },
-#     "prospect":
-#         {
-#             "first_name": "prospect01",
-#             "last_name": "prospect01",
-#             "phone": "1234567890",
-#         }
-# }
-#
-# COMPANIES = {
-#         "siren": "123456789",
-#         "name": "Company01",
-#     }
-#
-# LOCATIONS = {
-#     "nic": 12345,
-#     "street_number": 1,
-#     "bis_ter": "ter",
-#     "street_name": "street01",
-#     "zip_code": "12345",
-#     "town_name": "town01"
-# }
-#
-#
-# EVENTS = {
+        self.stdout.write(self.style.MIGRATE_HEADING("=> database created"))
