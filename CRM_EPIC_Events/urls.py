@@ -16,11 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-# from rest_framework_nested import routers
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView)
 
-from accounts.views import AccountView
+from accounts.views import AccountViewSet
 from additional_data.views import CompanyViewSet, LocationViewSet
 from persons.views import PersonViewSet
 from products.views import ContractViewSet, EventViewSet
@@ -32,14 +29,10 @@ router.register("contracts", ContractViewSet, basename="contracts")
 router.register("clients", PersonViewSet, basename="clients")
 router.register("companies", CompanyViewSet, basename="companies")
 router.register("locations", LocationViewSet, basename="locations")
+router.register("employees", AccountViewSet, basename="employees")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("crm_ee/signup/", AccountView.as_view(), name="signup"),
-    # path("crm_ee/logout/", include("rest_framework.urls")),
-    # path("crm_ee/tokens/", TokenObtainPairView.as_view(),
-    #      name="token_obtain_par"),
-    # path("crm_ee/tokens/refresh/", TokenRefreshView.as_view(),
-    #      name="token_refresh"),
+    path("crm_ee/signup/", include("rest_framework.urls")),
     path("crm_ee/", include(router.urls)),
 ]

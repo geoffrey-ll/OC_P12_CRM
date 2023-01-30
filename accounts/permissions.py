@@ -108,3 +108,16 @@ class LocationPermission(BasePermission):
                     return True
                 else:
                     return request.method in SAFE_METHODS
+
+
+class AccountPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
+        else:
+            return request.method in SAFE_METHODS
+
+    def has_object_permission(self, request, view, obj):
+        return True

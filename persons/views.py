@@ -34,7 +34,6 @@ class PersonViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.query_params.get("prospect"):
             return ProspectSerializer
-        # elif self.request.query_params.get("client"):
         return ClientSerializer
 
     def get_queryset(self):
@@ -44,7 +43,8 @@ class PersonViewSet(ModelViewSet):
             if all or user.team in ADMIN_TEAM:
                 prospects = Prospect.objects.all()
             else:
-                prospects = Prospect.objects.filter(id_last_sales_employee_contact=user)
+                prospects = \
+                    Prospect.objects.filter(last_sales_employee_contact=user)
             return prospects
         else:
             if all or user.team in ADMIN_TEAM:
@@ -54,13 +54,11 @@ class PersonViewSet(ModelViewSet):
             return clients
 
 
-        # all = self.request.query_params.get("all")
-
-    def perform_create(self, serializer):
-        pass
-
-    def perform_update(self, serializer):
-        pass
-
-    def perform_destroy(self, instance):
-        pass
+    # def perform_create(self, serializer):
+    #     pass
+    #
+    # def perform_update(self, serializer):
+    #     pass
+    #
+    # def perform_destroy(self, instance):
+    #     pass

@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,7 +43,6 @@ DJANGO_APPS = [
 
 DEPENDENCIES_APPS = [
     "rest_framework",
-    "rest_framework_simplejwt",
 ]
 
 PROJECT_APPS = [
@@ -118,6 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "accounts.Employee"
 ADMIN_TEAM = ["WM", "MA"]
+EMPLOYEE_TEAM = ["MA", "SA", "SU"]
 # AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 # Internationalization
