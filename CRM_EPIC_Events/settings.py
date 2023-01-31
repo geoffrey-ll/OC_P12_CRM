@@ -34,6 +34,8 @@ ALLOWED_HOSTS = []
 # Application definition
 DJANGO_APPS = [
     'django.contrib.admin',
+    # "django.contrib.admin.apps.SimpleAdminConfig"
+    # "CRM_EPIC_Events.apps.WebMasterAdminConfig",
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

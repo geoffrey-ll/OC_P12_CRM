@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 
+from accounts.admin import manager_admin_site, webmaster_admin_site
 from accounts.views import AccountViewSet
 from additional_data.views import CompanyViewSet, LocationViewSet
 from persons.views import PersonViewSet
@@ -32,7 +33,8 @@ router.register("locations", LocationViewSet, basename="locations")
 router.register("employees", AccountViewSet, basename="employees")
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("admin/", manager_admin_site.urls),
+    path("webmaster/", webmaster_admin_site.urls),
     path("crm_ee/signup/", include("rest_framework.urls")),
     path("crm_ee/", include(router.urls)),
 ]

@@ -41,6 +41,8 @@ class AccountViewSet(ModelViewSet):
                     return sales_of_events_handle | user_instance
 
     # def perform_create(self, serializer):
+    #     print(f"\nperform_create\n{self.__dict__}\n")
+    #     team = Employee.PossibleTeam.SALES
     #     pass
     #
     # def perform_update(self, serializer):
