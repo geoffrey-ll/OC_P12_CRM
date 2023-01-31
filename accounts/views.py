@@ -39,14 +39,3 @@ class AccountViewSet(ModelViewSet):
                 elif user.team == "SU":
                     sales_of_events_handle = get_sales_of_events_handle(user)
                     return sales_of_events_handle | user_instance
-
-    # def perform_create(self, serializer):
-    #     print(f"\nperform_create\n{self.__dict__}\n")
-    #     team = Employee.PossibleTeam.SALES
-    #     pass
-    #
-    # def perform_update(self, serializer):
-    #     pass
-    #
-    # def perform_destroy(self, instance):
-    #     pass

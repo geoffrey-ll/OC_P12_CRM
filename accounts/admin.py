@@ -1,14 +1,12 @@
 from django import forms
 from django.contrib import admin
-from django.contrib.admin.apps import AdminConfig
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField, AdminPasswordChangeForm, UserChangeForm, UserCreationForm
-from django.core.exceptions import ValidationError
-from django.forms import BaseModelForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from .models import Employee, SalesTeamEmployee, SupportTeamEmployee, ManagerTeamEmployee
 from .managers import determine_is_admin_status
+from .models import (
+    Employee, SalesTeamEmployee, SupportTeamEmployee, ManagerTeamEmployee)
 
 
 def create_user_in_corresponding_team_table(user):
@@ -88,6 +86,12 @@ class UserAdmin(BaseUserAdmin):
     ordering = ("email",)
     filter_horizontal = ()
 
+    def has_module_permission(self, request):
+        user = request.user
+        if user.team == "WM":
+            return True
+        if user.team == "MA":
+            return False
 
 
 
@@ -120,6 +124,9 @@ class ManagerTeamAdmin(UserAdmin):
         }),
     )
 
+    def has_module_permission(self, request):
+        return True
+
 
 class SalesTeamCreationForm(CommonCreationForm):
 
@@ -150,6 +157,9 @@ class SalesTeamAdmin(UserAdmin):
             "fields": ("email", "password1", "password2", "first_name", "last_name", "phone"),
         }),
     )
+
+    def has_module_permission(self, request):
+        return True
 
 
 class SupportTeamCreationForm(CommonCreationForm):
@@ -182,49 +192,12 @@ class SupportTeamAdmin(UserAdmin):
         }),
     )
 
-
-# class WebMasterAdminConfig(AdminConfig):
-#
-#     default_site = "CRM_EPIC_Events.admin.WebMasterAdminSite"
-#
-#
-# class ManagerAdminConfig(AdminConfig):
-#
-#     default_site = "CRM_EPIC_Events.admin.ManagerAdminSite"
+    def has_module_permission(self, request):
+        return True
 
 
-class WebMasterAdminSite(admin.AdminSite):
-
-    def has_permission(self, request):
-        print(f"\nrequest\n{request.user.team}\n")
-        if request.user.team == "WM":
-            return True
-
-
-class ManagerAdminSite(admin.AdminSite):
-
-    def has_permission(self, request):
-        if request.user.team == "MA":
-            return True
-
-
-
-# # Now register the new UserAdmin...
-# admin.site.register(Employee, UserAdmin)
-# # ... and, since we're not using Django's built-in permissions,
-# # unregister the Group model from admin.
-# admin.site.register(ManagerTeamEmployee, ManagerTeamAdmin)
-# admin.site.register(SalesTeamEmployee, SalesTeamAdmin)
-# admin.site.register(SupportTeamEmployee, SupportTeamAdmin)
-# # admin.site.unregister(Group)
-
-webmaster_admin_site = WebMasterAdminSite(name="webmaster")
-manager_admin_site = ManagerAdminSite(name="admin")
-# Now register the new UserAdmin...
-webmaster_admin_site.register(Employee, UserAdmin)
-# ... and, since we're not using Django's built-in permissions,
-# unregister the Group model from admin.
-manager_admin_site.register(ManagerTeamEmployee, ManagerTeamAdmin)
-manager_admin_site.register(SalesTeamEmployee, SalesTeamAdmin)
-manager_admin_site.register(SupportTeamEmployee, SupportTeamAdmin)
-# admin.site.unregister(Group)
+admin.site.register(Employee, UserAdmin)
+admin.site.register(ManagerTeamEmployee, ManagerTeamAdmin)
+admin.site.register(SalesTeamEmployee, SalesTeamAdmin)
+admin.site.register(SupportTeamEmployee, SupportTeamAdmin)
+admin.site.unregister(Group)
