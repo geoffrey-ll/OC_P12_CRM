@@ -87,12 +87,12 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
     def has_module_permission(self, request):
-        user = request.user
-        if user.team == "WM":
-            return True
-        if user.team == "MA":
+        try:
+            team = request.user.team
+            if team == "WM":
+                return True
+        except:
             return False
-
 
 
 class ManagerTeamCreationForm(CommonCreationForm):
@@ -108,19 +108,24 @@ class ManagerTeamChangeForm(CommonChangeForm):
 
     def save(self, commit=True, *args, **kwargs):
         user = super().save(commit=False)
-        ManagerTeamEmployee.objects.filter(id=user.id).delete(keep_parents=True)
+        # ManagerTeamEmployee.objects.filter(id=user.id).delete(keep_parents=True)
+        # ManagerTeamEmployee.objects.get(id=user.id).delete()
+        Employee.objects.get(id=user.id).delete()
         create_user_in_corresponding_team_table(user)
         return user
 
 
 class ManagerTeamAdmin(UserAdmin):
+
     add_form = ManagerTeamCreationForm
     form = ManagerTeamChangeForm
 
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("email", "password1", "password2", "first_name", "last_name", "phone"),
+            "fields": (
+                "email", "password1", "password2", "first_name", "last_name", "phone"
+            ),
         }),
     )
 

@@ -32,8 +32,8 @@ router.register("companies", CompanyViewSet, basename="companies")
 router.register("locations", LocationViewSet, basename="locations")
 router.register("employees", AccountViewSet, basename="employees")
 
+
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("crm_ee/signup/", include("rest_framework.urls")),
     path("crm_ee/", include(router.urls)),
 ]
