@@ -14,17 +14,23 @@ def create_user_in_corresponding_team_table(user):
         ManagerTeamEmployee.objects.create(
             id=user.id, email=user.email, password=user.password,
             first_name=user.first_name, last_name=user.last_name,
-            phone=user.phone, date_created=user.date_created)
+            phone=user.phone, date_created=user.date_created,
+            team="MA"
+        )
     if user.team == "SA":
         SalesTeamEmployee.objects.create(
             id=user.id, email=user.email, password=user.password,
             first_name=user.first_name, last_name=user.last_name,
-            phone=user.phone, date_created=user.date_created)
+            phone=user.phone, date_created=user.date_created,
+            team="SA"
+        )
     if user.team == "SU":
         SupportTeamEmployee.objects.create(
             id=user.id, email=user.email, password=user.password,
             first_name=user.first_name, last_name=user.last_name,
-            phone=user.phone, date_created=user.date_created)
+            phone=user.phone, date_created=user.date_created,
+            team="SU"
+        )
 
 
 class CommonCreationForm(UserCreationForm):
@@ -79,7 +85,10 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("email", "team", "password1", "password2", "first_name", "last_name", "phone"),
+            "fields": (
+                "email", "team", "password1", "password2",
+                "first_name", "last_name", "phone"
+            ),
         }),
     )
     search_fields = ("email",)
@@ -95,6 +104,24 @@ class UserAdmin(BaseUserAdmin):
             return False
 
 
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if change:
+            create_user_in_corresponding_team_table(obj)
+
+            for team, mod in zip(["MA", "SA", "SU"],
+                                 [ManagerTeamEmployee, SalesTeamEmployee,
+                                  SupportTeamEmployee]):
+                try:
+                    e_obj = mod.objects.get(id=obj.id)
+                    if e_obj.team != team:
+                        e_obj.delete(keep_parents=True)
+
+                except:
+                    pass
+
+
 class ManagerTeamCreationForm(CommonCreationForm):
 
     def save(self, commit=True, *args, **kwargs):
@@ -104,27 +131,17 @@ class ManagerTeamCreationForm(CommonCreationForm):
         return user
 
 
-class ManagerTeamChangeForm(CommonChangeForm):
-
-    def save(self, commit=True, *args, **kwargs):
-        user = super().save(commit=False)
-        # ManagerTeamEmployee.objects.filter(id=user.id).delete(keep_parents=True)
-        # ManagerTeamEmployee.objects.get(id=user.id).delete()
-        Employee.objects.get(id=user.id).delete()
-        create_user_in_corresponding_team_table(user)
-        return user
-
-
 class ManagerTeamAdmin(UserAdmin):
 
     add_form = ManagerTeamCreationForm
-    form = ManagerTeamChangeForm
+    form = CommonChangeForm
 
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
             "fields": (
-                "email", "password1", "password2", "first_name", "last_name", "phone"
+                "email", "password1", "password2",
+                "first_name", "last_name", "phone"
             ),
         }),
     )
@@ -142,24 +159,15 @@ class SalesTeamCreationForm(CommonCreationForm):
         return user
 
 
-class SalesTeamChangeForm(CommonChangeForm):
-
-    def save(self, commit=True, *args, **kwargs):
-        user = super().save(commit=False)
-        TEST02 = SalesTeamEmployee.objects.filter(id=user.id)
-        TEST02.delete()
-        create_user_in_corresponding_team_table(user)
-        return user
-
-
 class SalesTeamAdmin(UserAdmin):
     add_form = SalesTeamCreationForm
-    form = SalesTeamChangeForm
+    form = CommonChangeForm
 
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("email", "password1", "password2", "first_name", "last_name", "phone"),
+            "fields": ("email", "password1", "password2",
+                       "first_name", "last_name", "phone"),
         }),
     )
 
@@ -176,24 +184,15 @@ class SupportTeamCreationForm(CommonCreationForm):
         return user
 
 
-class SupportTeamChangeForm(CommonChangeForm):
-
-    def save(self, commit=True, *args, **kwargs):
-        user = super().save(commit=False)
-        TEST02 = SupportTeamEmployee.objects.filter(id=user.id)
-        TEST02.delete()
-        create_user_in_corresponding_team_table(user)
-        return user
-
-
 class SupportTeamAdmin(UserAdmin):
     add_form = SupportTeamCreationForm
-    form = SupportTeamChangeForm
+    form = CommonChangeForm
 
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("email", "password1", "password2", "first_name", "last_name", "phone"),
+            "fields": ("email", "password1", "password2",
+                       "first_name", "last_name", "phone"),
         }),
     )
 

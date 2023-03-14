@@ -27,7 +27,6 @@ DEFAULT_SUPERUSER = {
     "password": "dddd__8888"
 }
 
-
 class Command(BaseCommand):
 
     help = "Initialise a database for test development."
