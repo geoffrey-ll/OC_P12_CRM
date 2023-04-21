@@ -56,7 +56,6 @@ def validate_contract_number_format(value):
         """Vérifie que le numéro de contrat commence par YYYYMM en cours."""
         now = timezone.now()
         actually_year_month = str(now.year) + str(now.month).zfill(2)
-        print(f"\n\n{actually_year_month}\n")
         if year_month_of_contract_number != actually_year_month:
             return ValidationError(MESS_VAL_ERR__CONTRACT_NUMBER_STARTSWITH)
         return ""

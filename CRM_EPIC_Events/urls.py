@@ -16,8 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
+from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 
-# from accounts.admin import manager_admin_site, webmaster_admin_site
 from accounts.views import AccountViewSet
 from additional_data.views import CompanyViewSet, LocationViewSet
 from persons.views import PersonViewSet
@@ -36,4 +36,8 @@ router.register("employees", AccountViewSet, basename="employees")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("crm_ee/", include(router.urls)),
+    path("crm_ee/tokens/", TokenObtainPairView.as_view(),
+         name="token_obtain_pair"),
+    path("crm_ee/tokens/refresh/", TokenRefreshView.as_view(),
+         name="token_refresh"),
 ]

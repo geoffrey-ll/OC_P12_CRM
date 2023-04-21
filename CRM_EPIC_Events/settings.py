@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import config
@@ -134,7 +134,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-# EN UTILISANT DATETIME_FORMAT, LES DATETIME NE SONT PLUS EN TZ+0100 (HEURE DE PARIS), MAIS EN TZ+0000 (HEURE DE LONDRES).
+# EN UTILISANT DATETIME_FORMAT, LES DATETIME NE SONT PLUS EN
+# TZ+0100 (HEURE DE PARIS), MAIS EN TZ+0000 (HEURE DE LONDRES).
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 # Static files (CSS, JavaScript, Images)
@@ -151,7 +152,14 @@ REST_FRAMEWORK = {
     # "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 5,
+    "DEFAULT_AUTHENTICATION_CLASSES":
+        ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(weeks=1),
 }

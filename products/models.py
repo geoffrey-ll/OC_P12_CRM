@@ -66,7 +66,7 @@ class Contract(models.Model):
     client = models.ForeignKey(to=Client, on_delete=models.RESTRICT)
     closed = models.BooleanField(default=False)
     # Doit être complété automatiquement et non seulement suggéré.
-    contract_number = models.PositiveSmallIntegerField(
+    contract_number = models.PositiveBigIntegerField(
         default=determine_a_next_contract_number, unique=True,
         validators=[validate_contract_number_format])
     amount = models.FloatField(default=0.00)
