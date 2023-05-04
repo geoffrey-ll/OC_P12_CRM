@@ -56,18 +56,3 @@ class EventViewSet(ModelViewSet):
             return Event.objects.filter(
                 contract__client__id_sales_employee=user)
 
-    def create(self, request, *args, **kwargs):
-        try:
-            super().create(request, *args, **kwargs)
-
-        except Exception as e:
-            raise ValidationError(str(e))
-
-    # def perform_create(self, serializer):
-    #     pass
-    #
-    # def perform_update(self, serializer):
-    #     pass
-    #
-    # def perform_destroy(self, instance):
-    #     pass

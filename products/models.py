@@ -115,9 +115,7 @@ class Event(models.Model):
     status =  models.IntegerField(choices=PossibleStatus.choices,
                                   default=PossibleStatus.forthcoming,
                                   editable=False)
-    start_event = models.DateTimeField(default=timezone.now()
-                                               + timedelta(hours=2),
-                                       validators=[validate_datetime_no_past])
+    start_event = models.DateTimeField(validators=[validate_datetime_no_past])
     end_event = models.DateTimeField(validators=[validate_datetime_no_past])
     attendees = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(2)])

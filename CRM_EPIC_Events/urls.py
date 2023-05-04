@@ -34,6 +34,7 @@ router.register("employees", AccountViewSet, basename="employees")
 
 
 urlpatterns = [
+    path("api-auth/", include("rest_framework.urls", namespace="rest_famework")),
     path("admin/", admin.site.urls),
     path("crm_ee/", include(router.urls)),
     path("crm_ee/tokens/", TokenObtainPairView.as_view(),

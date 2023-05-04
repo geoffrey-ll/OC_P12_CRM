@@ -41,8 +41,9 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-DEPENDENCIES_APPS = [
+REST_FRAMEWORK_APPS = [
     "rest_framework",
+    "rest_framework_simplejwt",
 ]
 
 PROJECT_APPS = [
@@ -52,7 +53,7 @@ PROJECT_APPS = [
     "products",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + DEPENDENCIES_APPS + PROJECT_APPS
+INSTALLED_APPS = DJANGO_APPS + REST_FRAMEWORK_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -154,9 +155,9 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 5,
     "DEFAULT_AUTHENTICATION_CLASSES":
         ("rest_framework_simplejwt.authentication.JWTAuthentication",),
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 SIMPLE_JWT = {

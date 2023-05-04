@@ -12,9 +12,9 @@ class ContractManager(BaseUserManager):
 class EventManager(BaseUserManager):
 
     def create(
-            self, support_employee, contract, location, end_event, attendees):
+            self, support_employee, contract, location, start_event, end_event, attendees, notes, *args, **kwargs):
         event = self.model(
             support_employee=support_employee, contract=contract,
-            location=location, end_event=end_event, attendees=attendees)
+            location=location, start_event=start_event, end_event=end_event, attendees=attendees, notes=notes, *args, **kwargs)
         event.save(using=self._db)
         return event
