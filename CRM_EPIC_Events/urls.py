@@ -33,12 +33,18 @@ router.register("locations", LocationViewSet, basename="locations")
 router.register("employees", AccountViewSet, basename="employees")
 
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
+
+
 urlpatterns = [
-    path("api-auth/", include("rest_framework.urls", namespace="rest_famework")),
+    path("crm_ee/", include("rest_framework.urls", namespace="rest_famework")),
     path("admin/", admin.site.urls),
     path("crm_ee/", include(router.urls)),
     path("crm_ee/tokens/", TokenObtainPairView.as_view(),
          name="token_obtain_pair"),
     path("crm_ee/tokens/refresh/", TokenRefreshView.as_view(),
          name="token_refresh"),
+    path("crm_ee/sentry-debug-test/", trigger_error)
 ]
