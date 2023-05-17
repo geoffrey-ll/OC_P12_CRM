@@ -171,7 +171,7 @@ REST_FRAMEWORK = {
 
 
 sentry_sdk.init(
-    dsn="https://6c2549fa37744455b9388798bb2c350b@o4505199503409152.ingest.sentry.io/4505199545745408",
+    dsn=config("SENTRY_DSN"),
     traces_sample_rate=1.0,
     send_default_pii=True
 )
