@@ -2,6 +2,7 @@ message_for_commit.txt
 sandbox.py
 */migrations/
 
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudio,windows,linux,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,visualstudio,windows,linux,macos
 
@@ -264,6 +265,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+env
 .env
 .venv
 .env/
