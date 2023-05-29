@@ -1,3 +1,4 @@
+"""Model de l'app additional_data."""
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -6,11 +7,12 @@ from .managers import CompanyManager, LocationManager
 
 
 class Company(models.Model):
-    siren = models.PositiveIntegerField(unique=True,
-                                        validators=[
-                                            MinValueValidator(100_000_000),
-                                            MaxValueValidator(999_999_999)
-                                        ])
+
+    siren = models.PositiveIntegerField(
+        unique=True,
+        validators=[
+            MinValueValidator(100_000_000), MaxValueValidator(999_999_999)
+        ])
     name = models.CharField(max_length=50)
     designation = models.CharField(unique=True, default=name, max_length=50)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -34,7 +36,8 @@ class Location(models.Model):
                                                   MaxValueValidator(99_999)])
     designation = models.CharField(max_length=50, default=company.name)
     street_number = models.PositiveSmallIntegerField()
-    bis_ter = models.CharField(max_length=10, blank=True, null=True) # Plutôt mettre un choices
+    # todo -> bis_ter : à remplacer par un choices.
+    bis_ter = models.CharField(max_length=10, blank=True, null=True)
     street_name = models.CharField(max_length=50)
     zip_code = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(10_000), MaxValueValidator(99_999)])
@@ -47,6 +50,7 @@ class Location(models.Model):
         """SIRET = SIREN + NIC
         SIRET est unique
         """
+        # Pour une nàj
         pass
 
     def __str__(self):

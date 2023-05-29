@@ -1,65 +1,25 @@
-from rest_framework.exceptions import NotAuthenticated, PermissionDenied
+"""Permissions sur les modèles."""
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from CRM_EPIC_Events.commons_functions import get_locations_of_clients_and_events
+from CRM_EPIC_Events.commons_functions import (get_clients_handle,
+                                               get_events_handle)
 from CRM_EPIC_Events.settings import ADMIN_TEAM
-from additional_data.models import Company, Location
-from persons.models import Client
-from products.models import Contract, Event
 
 
 class ContractPermission(BasePermission):
+    """Permissions des contracts.
 
-    def has_permission(self, request, view):
-        user = request.user
-        if user.team == "SU":
-            return request.method in SAFE_METHODS
-        return True
-
-    def has_object_permission(self, request, view, obj):
-        user = request.user
-        if user.team in ADMIN_TEAM:
-            return True
-        else:
-            pk_contract = view.kwargs.get("pk")
-            contract = Contract.objects.get(id=pk_contract)
-            if user.team == "SA" and contract.client.sales_employee.id == user.id:
-                return True
-            else:
-                return request.method in SAFE_METHODS
-
-
-class EventPermission(BasePermission):
-
-    def has_permission(self, request, view):
-        user = request.user
-        if not view.detail and user.team == "SU":
-            return request.method in SAFE_METHODS
-        return True
-
-    def has_object_permission(self, request, view, obj):
-        user = request.user
-        if user.team in ADMIN_TEAM:
-            return True
-        else:
-            pk_event = view.kwargs.get("pk")
-            event = Event.objects.get(id=pk_event)
-            if user.team == "SU" and event.support_employee.id == user.id:
-                return True
-            else:
-                return request.method in SAFE_METHODS
-
-
-class PersonPermission(BasePermission):
-
-    def has_permission(self, request, view):
-        return True
-
-    def has_object_permission(self, request, view, obj):
-        return True
-
-
-class CompanyPermission(BasePermission):
+    - Manager :
+        - Afficher, créer, modifier et supprimer.
+    - Sales :
+        - Afficher et créer.
+        - Modifier les contrats des clients dont l'utilisateur a la
+        charge.
+    - Support :
+        - Afficher.
+    - Webmaster :
+        - Toutes les permissions.
+    """
 
     def has_permission(self, request, view):
         user = request.user
@@ -73,16 +33,25 @@ class CompanyPermission(BasePermission):
             return True
         else:
             if user.team == "SA":
-                clients_handle = Client.objects.filter(id_sales_employee=user)
-                if obj.id in [client.company.id for client in clients_handle]:
+                if obj.client.sales_employee.id == user.id:
                     return True
-                else:
-                    return request.method in SAFE_METHODS
-            else:
+            if user.team == "SU":
                 return request.method in SAFE_METHODS
 
 
-class LocationPermission(BasePermission):
+class EventPermission(BasePermission):
+    """Permissions des events.
+
+    - Manager :
+        - Afficher, créer, modifier et supprimer.
+    - Sales :
+        - Afficher et créer.
+    - Support :
+        - Afficher.
+        - Modifier des events dont l'utilisateur a la charge.
+    - Webmaster :
+        - Toutes les permissions.
+    """
 
     def has_permission(self, request, view):
         user = request.user
@@ -95,25 +64,159 @@ class LocationPermission(BasePermission):
         if user.team in ADMIN_TEAM:
             return True
         else:
-            if user.team == "SA" or user.team == "SU":
-                locations_of_events, locations_of_clients = \
-                    get_locations_of_clients_and_events(user)
-                if user.team == "SA" \
-                        and obj.company in [location.company
-                                            for location in locations_of_clients]:
+            if user.team == "SA":
+                return request.method in SAFE_METHODS
+            if user.team == "SU":
+                if obj.support_employee.id == user.id:
                     return True
-                if user.team == "SU" \
-                        and obj.id in [location.id
-                                       for location in locations_of_events]:
+
+
+class PersonPermission(BasePermission):
+    """Permissions des clients et des prospects.
+
+    Permissions des clients :
+    - Manager :
+        - Afficher, créer, modifier et supprimer.
+    - Sales :
+        - Afficher, créer, modifier et supprimer.
+    - Support :
+        - Afficher.
+    - Webmaster :
+        - Toutes les permissions.
+
+    Permissions des prospects :
+    - Manager :
+        - Afficher, créer, modifier et supprimer.
+    - Sales :
+        - Afficher, créer, modifier et supprimer.
+    - Support :
+        - Afficher.
+    - Webmaster :
+        - Toutes les permissions.
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        if user.team in ADMIN_TEAM or user.team == "SA":
+            return True
+        elif user.team == "SU":
+            return request.method in SAFE_METHODS
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
+        else:
+            if user.team == "SA":
+                if view.request.query_params.get("prospect") == "True" \
+                        or view.request.query_params.get("prospect") == "true":
+                    return True
+                else:
+                    if obj.sales_employee.id == user.id:
+                        return True
+                    return request.method in SAFE_METHODS
+            if user.team == "SU":
+                return request.method in SAFE_METHODS
+
+
+class CompanyPermission(BasePermission):
+    """Permissions des companies.
+
+    - Manager :
+        - Afficher, créer, modifier et supprimer.
+    - Sales :
+        - Afficher et créer.
+        - Modifier les companies des clients dont l'utilisateur a la
+        charge.
+    - Support :
+        - Afficher.
+    - Webmaster :
+        - Toutes les permissions.
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        if user.team == "SU":
+            return request.method in SAFE_METHODS
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
+        else:
+            if user.team == "SA":
+                clients_handle = get_clients_handle(user)
+                if obj.id in [client.company.id for client in clients_handle]:
                     return True
                 else:
                     return request.method in SAFE_METHODS
+            if user.team == "SU":
+                return request.method in SAFE_METHODS
+
+
+class LocationPermission(BasePermission):
+    """Permissions des locations.
+
+    - Manager :
+        - Afficher, créer, modifier et supprimer.
+    - Sales :
+        - Afficher et créer.
+        - Modifier les locations des clients dont l'utilisateur a la
+        charge.
+    - Support :
+        - Afficher.
+        - Modifier les locations des events dont l'utilisateur a la
+        charge.
+    - Webmaster :
+        - Toutes les permissions.
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        if not view.detail and user.team == "SU":
+            return request.method in SAFE_METHODS
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
+        else:
+            if user.team == "SA":
+                clients_handle = get_clients_handle(user)
+                if obj.company.id in [client.company.id
+                                      for client in clients_handle]:
+                    return True
+            if user.team == "SU":
+                events_handle = get_events_handle(user)
+                if obj.id in [event.location.id for event in events_handle]:
+                    return True
+            return request.method in SAFE_METHODS
 
 
 class AccountPermission(BasePermission):
+    """Permissions des comptes utilisateurs.
+
+    - Manager :
+        - Afficher, créer, modifier et supprimer
+        (hors comptes Webmaster).
+    - Sales :
+        - Afficher (hors webmaster).
+    - Support :
+        - Afficher (hors webmaster).
+    - Webmaster :
+        - Toutes les permissions.
+    """
 
     def has_permission(self, request, view):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
         return request.method in SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
+        user = request.user
+        if user.team in ADMIN_TEAM:
+            return True
         return request.method in SAFE_METHODS

@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
 
 from accounts.views import AccountViewSet
 from additional_data.views import CompanyViewSet, LocationViewSet
@@ -25,16 +26,18 @@ from products.views import ContractViewSet, EventViewSet
 
 
 router = routers.SimpleRouter()
-router.register("events", EventViewSet, basename="events")
-router.register("contracts", ContractViewSet, basename="contracts")
 router.register("clients", PersonViewSet, basename="clients")
 router.register("companies", CompanyViewSet, basename="companies")
-router.register("locations", LocationViewSet, basename="locations")
+router.register("contracts", ContractViewSet, basename="contracts")
 router.register("employees", AccountViewSet, basename="employees")
+router.register("events", EventViewSet, basename="events")
+router.register("locations", LocationViewSet, basename="locations")
 
 
 def trigger_error(request):
+    """Test d'erreur avec Sentry."""
     division_by_zero = 1 / 0
+    return division_by_zero
 
 
 urlpatterns = [

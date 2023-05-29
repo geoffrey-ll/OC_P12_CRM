@@ -11,12 +11,10 @@ from pathlib import Path
 
 from decouple import config
 import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -28,7 +26,6 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", cast=bool)
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 DJANGO_APPS = [
@@ -43,7 +40,7 @@ DJANGO_APPS = [
 
 REST_FRAMEWORK_APPS = [
     "rest_framework",
-    # "rest_framework_simplejwt",
+    "rest_framework_simplejwt",
 ]
 
 PROJECT_APPS = [
@@ -85,10 +82,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'CRM_EPIC_Events.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -118,15 +113,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "accounts.Employee"
-ADMIN_TEAM = ["WM", "MA"]
-EMPLOYEE_TEAM = ["MA", "SA", "SU"]
-LOGIN_REDIRECT_URL = "/crm_ee/clients/"
-# AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
-
 LANGUAGE_CODE = 'fr-FR'
 
 TIME_ZONE = "Europe/Paris"
@@ -135,43 +123,45 @@ USE_I18N = True
 
 USE_TZ = True
 
-# EN UTILISANT DATETIME_FORMAT, LES DATETIME NE SONT PLUS EN
-# TZ+0100 (HEURE DE PARIS), MAIS EN TZ+0000 (HEURE DE LONDRES).
+# En utilisant DATETIME_FORMAT, les datetime ne sont plus en
+# tz+0100 (heure de Paris), mais en tz+0000 (heure de Londres).
+# À investiguer.
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
-
 STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS":
-        ["django_filters.rest_framework.DjangoFilterBackend"],
+        ["django_filters.rest_framework.DjangoFilterBackend",
+         "rest_framework.filters.SearchFilter"],
     "DEFAULT_PAGINATION_CLASS":
         "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 5,
-    # "DEFAULT_AUTHENTICATION_CLASSES":
-    #     ("rest_framework_simplejwt.authentication.JWTAuthentication",),
-    # "DEFAULT_AUTHENTICATION_CLASSES":
-    #     ("rest_framework_simplejwt.authentication.SessionAuthentication",),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES":
+        ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    'DEFAULT_PERMISSION_CLASSES':
+        ['rest_framework.permissions.IsAuthenticated'],
 }
 
-# SIMPLE_JWT = {
-#     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-#     "REFRESH_TOKEN_LIFETIME": timedelta(weeks=1),
-# }
-
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(weeks=1),
+}
 
 sentry_sdk.init(
     dsn=config("SENTRY_DSN"),
     traces_sample_rate=1.0,
     send_default_pii=True
 )
+
+AUTH_USER_MODEL = "accounts.Employee"
+LOGIN_REDIRECT_URL = "/crm_ee/clients/"
+LOGOUT_REDIRECT_URL = "/admin/login/"
+ADMIN_TEAM = ["WM", "MA"]
+EMPLOYEE_TEAM = ["MA", "SA", "SU"]

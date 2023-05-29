@@ -1,3 +1,4 @@
+"""Managers de l'app additional    _data."""
 from django.contrib.auth.base_user import BaseUserManager
 
 
@@ -17,7 +18,6 @@ class LocationManager(BaseUserManager):
 
         if country == "":
             country = self.model.COUNTRY_DEFAULT
-
         location = self.model(
             company=company, nic=nic, designation=designation,
             street_number=street_number, bis_ter=bis_ter,

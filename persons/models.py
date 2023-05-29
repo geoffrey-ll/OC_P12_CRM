@@ -1,18 +1,28 @@
+"""Model de l'app persons.
+
+Client et Prospect héritent tous deux de Persons.
+Client et Prospect ne sont pas des comptes utilisateurs.
+"""
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 from .managers import ClientProspectManager
 from accounts.models import Person, SalesTeamEmployee
 from additional_data.models import Company
 
 
-
 class CommonInfoClientProspect(Person):
+    """Model parent aux model Client et Prospect.
+
+    Contient les champs communs aux model Client et Prospect.
+    Est un model abstract.
+    """
 
     sales_employee = models.ForeignKey(to=SalesTeamEmployee,
                                        on_delete=models.RESTRICT)
     company = models.ForeignKey(to=Company, on_delete=models.RESTRICT,
                                 blank=True, null=True)
+    email = models.EmailField(max_length=255, unique=True,
+                              verbose_name='email address')
 
     objects = ClientProspectManager()
 
@@ -26,22 +36,16 @@ class CommonInfoClientProspect(Person):
 class Client(CommonInfoClientProspect):
     """Modèle des clients.
 
-    (ayant déjà eu un contrat).
+    Ayant déjà eu un contrat.
     """
+
     pass
 
 
 class Prospect(CommonInfoClientProspect):
-    """Modèle des individus prospectés.
+    """Modèle des personnes prospectées.
 
-    (n'ayant jamais eu de contrat).
+    N'ayant jamais eu de contrat.
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        field = self._meta.get_field("sales_employee")
-        field.verbose_name = "last sales contacted"
 
-    last_sales_contacted = CommonInfoClientProspect.sales_employee
-    date_last_contact = models.DateTimeField(auto_now=True) # À modifier car pas vraiment ça
-
-
+    date_last_contact = models.DateTimeField(auto_now=True)

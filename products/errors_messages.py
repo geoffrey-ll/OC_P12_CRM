@@ -1,29 +1,6 @@
-"""Messages d'erreurs de l'app Products.
-
-classes :
--
-
-Méthodes :
--
-
-Exceptions :
--
-
-Erreurs :
--
-
-Constantes :
-- FORMAT_CONTRACT_NUMBER
-- MESS_VAL_ERR__CONTRACT_NUMBER_ENDSWITH
-- MESS_VAL_ERR__CONTRACT_NUMBER_LEN
-- MESS_VAL_ERR__CONTRACT_NUMBER_STARTSWITH
-- MESS_VAL_ERR__DATETIME_PAST
-- MESS_VAL_ERR__END_EVENT_INF_START_EVENT
-
-"""
+"""Messages d'erreurs de l'app products."""
 
 FORMAT_CONTRACT_NUMBER = "YYYYMM0000"
-
 
 MESS_VAL_ERR__CONTRACT_NUMBER_ENDSWITH = \
     f"Incorrect end of the number. For the period concerned (YYMM), " \

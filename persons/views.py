@@ -1,64 +1,52 @@
-from django.shortcuts import render
+"""Views de l'app persons."""
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ViewSet
-
-from collections import namedtuple
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Client, Prospect
-from .serializers import NotUserSerializer, ProspectSerializer, ClientSerializer
+from .serializers import ProspectSerializer, ClientSerializer
 from accounts.permissions import PersonPermission
+from CRM_EPIC_Events.commons_functions import (
+    get_events_handle, get_clients_of_events_handle)
 from CRM_EPIC_Events.settings import ADMIN_TEAM
 
 
-AllClients = namedtuple("AllClients", ("clients", "prospects"))
-
-# Create your views here.
 class PersonViewSet(ModelViewSet):
 
-
-    # serializer_class = NotUserSerializer
     permission_classes = [IsAuthenticated, PersonPermission]
-
-
-
-    # def list(self, request, *args, **kwargs):
-    #
-    #     all_clients = AllClients(clients=Client.objects.all(),
-    #                              prospects=Prospect.objects.all())
-    #
-    #     serializer = NotUserSerializer(all_clients)
-    #     return Response(serializer.data)
-
+    filter_search_fields = ["first_name", "last_name", "email"]
+    filterset_fields = filter_search_fields
+    search_fields = filter_search_fields
 
     def get_serializer_class(self):
+        """Choix du serializer.
+
+        Client et Prospect partage le même endpoint.
+        Par défaut, c'est Client qui est serializé.
+        Pour sérializer Prospect, il faut : ?prospect=True dans l'URL.
+        """
         if self.request.query_params.get("prospect"):
             return ProspectSerializer
         return ClientSerializer
 
     def get_queryset(self):
         user = self.request.user
-        all = self.request.query_params.get("all")
-        if self.request.query_params.get("prospect"):
-            if all or user.team in ADMIN_TEAM:
+        param_all = self.request.query_params.get("all")
+        param_prospect = self.request.query_params.get("prospect")
+
+        if param_prospect:
+            if param_all or user.team in ADMIN_TEAM:
                 prospects = Prospect.objects.all()
             else:
-                prospects = \
-                    Prospect.objects.filter(last_sales_employee_contact=user)
+                prospects = Prospect.objects.filter(
+                    sales_employee=user)
             return prospects
+
         else:
-            if all or user.team in ADMIN_TEAM:
+            if param_all or user.team in ADMIN_TEAM:
                 clients = Client.objects.all()
+            elif user.team == "SU":
+                events_handle = get_events_handle(user)
+                clients = get_clients_of_events_handle(events_handle)
             else:
                 clients = Client.objects.filter(sales_employee=user)
             return clients
-
-
-    # def perform_create(self, serializer):
-    #     pass
-    #
-    # def perform_update(self, serializer):
-    #     pass
-    #
-    # def perform_destroy(self, instance):
-    #     pass
