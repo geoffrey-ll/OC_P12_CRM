@@ -14,10 +14,10 @@ class ClientAdmin(admin.ModelAdmin):
 
 class ProspectAdmin(admin.ModelAdmin):
 
-    list_display = ("id", "sales_employee", "date_last_contact",
+    list_display = ("id", "sales_employee",
                     "first_name", "last_name", "phone", "email",
-                    "date_created", "date_updated",
-                    "company")
+                    "date_last_contact", "company",
+                    "date_created", "date_updated",)
 
 
 admin.site.register(Client, ClientAdmin)
