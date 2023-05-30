@@ -12,12 +12,12 @@
 # CRM de EPIC Events #
 
 1. [Description](#description)
-2. [Diagramme ERD](#ERD_diagram)
+2. [Diagramme ERD](#erd_diagram)
 3. [Sentry monitoring](#sentry)
 4. [Installation et configuration](#install_config)
    1. [Prérequis](#prerequisite)
    2. [Installation du projet](#install_project) 
-   3. [Configuration de PostgreSQL](#config_postgreSQL)
+   3. [Configuration de PostgreSQL](#config_postgresql)
    4. [Configuration du projet](#config_project)
       1. [Droit admin et teams](#admin_team)
 5. [Démarrer le serveur local](#runserver)
@@ -38,7 +38,7 @@ L'utilisation de ce CRM nécessite un compte (voir [Droit admin et comptes](#adm
 
 
 
-# Diagramme ERD <a name="ERD_diagram"></a> #
+# Diagramme ERD <a name="erd_diagram"></a> #
 
 ![Diagramme ERD .svg](readme_files/ERD_diagram.svg)
 
@@ -100,7 +100,7 @@ Cela doit générer une ZeroDivisionEror.
 
 
 
-### Configuration de postgreSQL <a name="config_postgreSQL"></a> ###
+### Configuration de postgreSQL <a name="config_postgresql"></a> ###
 
 1. Lancez un shell PostgreSQL
     ```
