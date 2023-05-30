@@ -97,7 +97,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -122,11 +121,6 @@ TIME_ZONE = "Europe/Paris"
 USE_I18N = True
 
 USE_TZ = True
-
-# En utilisant DATETIME_FORMAT, les datetime ne sont plus en
-# tz+0100 (heure de Paris), mais en tz+0000 (heure de Londres).
-# À investiguer.
-DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S %z"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

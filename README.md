@@ -33,7 +33,7 @@ Ce CRM (Customer Relationship Management) permet le suivi de tous les clients et
 
 L'utilisation de ce CRM nécessite un compte (voir [connexion](#connexion)).
 
-
+![Diagramme ERD SVG](readme_files/ERD_diagram.svg)
 
 # Installation <a name="installation"></a> #
 
@@ -42,7 +42,7 @@ L'utilisation de ce CRM nécessite un compte (voir [connexion](#connexion)).
 - Python 3.10.6 (ddl [ici](https://www.python.org/downloads/release/python-3106/))
 - PostgreSQL (ddl [ici](https://www.postgresql.org/ftp/source/v14.7/))
 
-
+![Diagramme ERD png](readme_files/ERD_diagram.png)
 
 ### Installation du projet <a name="install_project"></a> ###
 

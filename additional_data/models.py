@@ -36,7 +36,6 @@ class Location(models.Model):
                                                   MaxValueValidator(99_999)])
     designation = models.CharField(max_length=50, default=company.name)
     street_number = models.PositiveSmallIntegerField()
-    # todo -> bis_ter : à remplacer par un choices.
     bis_ter = models.CharField(max_length=10, blank=True, null=True)
     street_name = models.CharField(max_length=50)
     zip_code = models.PositiveSmallIntegerField(
@@ -45,13 +44,6 @@ class Location(models.Model):
     country = models.CharField(max_length=50, default=COUNTRY_DEFAULT)
 
     objects = LocationManager()
-
-    def siret(self):
-        """SIRET = SIREN + NIC
-        SIRET est unique
-        """
-        # Pour une nàj
-        pass
 
     def __str__(self):
         return f"{self.designation}"

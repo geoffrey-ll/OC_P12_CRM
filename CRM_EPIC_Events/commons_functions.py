@@ -1,14 +1,8 @@
 """Fonctions communes à plusieurs modules."""
-from CRM_EPIC_Events.settings import DATETIME_FORMAT
 from accounts.models import Employee
 from additional_data.models import Location
 from persons.models import Client
 from products.models import Event
-
-
-def datetime_to_str(datetime_):
-    """Format horodatage plus lisible."""
-    return datetime_.strftime(DATETIME_FORMAT)
 
 
 def get_clients_handle(user):

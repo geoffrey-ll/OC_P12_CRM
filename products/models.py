@@ -60,7 +60,6 @@ class Event(models.Model):
                                          on_delete=models.RESTRICT)
     contract = models.ForeignKey(to=Contract, on_delete=models.RESTRICT)
     location = models.ForeignKey(to=Location, on_delete=models.RESTRICT)
-    # todo -> status devrait être automatique selon datetime de l'event.
     status = models.IntegerField(choices=PossibleStatus.choices,
                                  default=PossibleStatus.forthcoming,
                                  editable=False)
