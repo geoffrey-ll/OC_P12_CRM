@@ -11,16 +11,19 @@
 
 # CRM de EPIC Events #
 
-1.  [Description](#description)
-2.  [Installation](#installation)
-    1. [Prérequis](#prerequisite)
-    2. [Installation du projet](#install_project) 
-    3. [Configuration de PostgreSQL](#config_postgreSQL)
-    4. [Configuraion du projet](#config_project)
-3.  [Connexion](#connexion)
-4.  [Documentation Postman](#doc_postman)
-5.  [À propos](#a-propos)
-    1.  [Bugs connus](#bugs-connus)
+1. [Description](#description)
+2. [Diagramme ERD](#ERD_diagram)
+3. [Sentry monitoring](#sentry)
+4. [Installation et configuration](#install_config)
+   1. [Prérequis](#prerequisite)
+   2. [Installation du projet](#install_project) 
+   3. [Configuration de PostgreSQL](#config_postgreSQL)
+   4. [Configuration du projet](#config_project)
+      1. [Droit admin et teams](#admin_team)
+5. [Démarrer le serveur local](#runserver)
+6. [Documentation Postman](#doc_postman)
+7. [À propos](#a-propos)
+   1.  [Bugs connus](#bugs-connus)
 
 
 
@@ -31,18 +34,38 @@
 
 Ce CRM (Customer Relationship Management) permet le suivi de tous les clients et événements gérés par l'entreprise EPIC Events.
 
-L'utilisation de ce CRM nécessite un compte (voir [connexion](#connexion)).
+L'utilisation de ce CRM nécessite un compte (voir [Droit admin et comptes](#admin_user)).
 
-![Diagramme ERD SVG](readme_files/ERD_diagram.svg)
 
-# Installation <a name="installation"></a> #
+
+# Diagramme ERD <a name="ERD_diagram"></a> #
+
+![Diagramme ERD .svg](readme_files/ERD_diagram.svg)
+
+
+
+# Sentry monitoring <a name="sentry"></a> #
+
+Le projet est liable à votre compte Sentry (voir [Configuration du projet](#config_project))\
+Après avoir installé et configuré le projet, vous pouvez vérifier que le compte est bien lié au projet sur :
+
+```
+localhost:8000/crm_ee/sentry-debug/
+```
+Cela doit générer une ZeroDivisionEror.
+
+![Sentry monitoring](readme_files/sentry_entry.png)
+
+
+
+# Installation et configuration <a name="install_config"></a> #
 
 ### Prérequis <a name="prerequisite"></a> ###
 
 - Python 3.10.6 (ddl [ici](https://www.python.org/downloads/release/python-3106/))
 - PostgreSQL (ddl [ici](https://www.postgresql.org/ftp/source/v14.7/))
 
-![Diagramme ERD png](readme_files/ERD_diagram.png)
+
 
 ### Installation du projet <a name="install_project"></a> ###
 
@@ -104,18 +127,31 @@ L'utilisation de ce CRM nécessite un compte (voir [connexion](#connexion)).
     ```
     SECRET_KEY="your secret key"
     DEBUG=True
+    SENTRY_DSN="your URL DSN for sentry monitoring. Required sentry account. Is optionnel.
+               https://sentry.io/signup/ for create a account."
+   
+    # Configuration DB postgreSQL
     DB_NAME="DB name"
     DB_USERNAME="DB username"
     DB_USERNAME_PASSWORD="DB username password"
     ```
 2. Effectuez les migrations :
     ```
-    python manage.py migrate
+   python manage.py makemigrations
+    ```
+   puis
+    ```
+   python manage.py migarte
     ```
 3. Créer un superuser :
     ```
     python manage.py createsuperuser
     ```
+   avec pour team "WM"
+
+
+
+##### Droit admin et teams <a name="admin_team"></a> #####
 
 | team  | WM  | MA  | SA  | SU  |
 |:-----:|:---:|:---:|:---:|:---:|
