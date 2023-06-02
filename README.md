@@ -18,8 +18,9 @@
    1. [Prérequis](#prerequisite)
    2. [Installation du projet](#install_project) 
    3. [Configuration de PostgreSQL](#config_postgresql)
+   4. [Configuration de Sentry](#config_sentry)
    4. [Configuration du projet](#config_project)
-      1. [Droit admin et teams](#admin_team)
+      1. [Droits admin et teams](#admin_team)
 5. [Démarrer le serveur local](#runserver)
 6. [Documentation Postman](#doc_postman)
 7. [À propos](#a-propos)
@@ -121,6 +122,12 @@ Cela doit générer une ZeroDivisionEror.
 
 
 
+### Configuration de Sentry <a name="config_sentry"></a> ###
+
+[sentry sd](readme_files/sentry_create_project_and_get_dns_sd.gif)
+
+[sentry hd](readme_files/sentry_create_project_and_get_dns_hd.gif)
+
 ### Configuration du projet <a name="config_project"></a> ###
 
 1. À la racine du projet, créez un fichier ".env" contenant :
@@ -153,9 +160,17 @@ Cela doit générer une ZeroDivisionEror.
 
 ##### Droit admin et teams <a name="admin_team"></a> #####
 
-| team  | WM  | MA  | SA  | SU  |
-|:-----:|:---:|:---:|:---:|:---:|
-| admin | oui | oui | non | non |
+4 types de comptes utilisateurs. Chacun d'entre-eux ont des permissions différentes (pour plus de détails, voir la [documentation Postman](https://documenter.getpostman.com/view/20658594/2s93JwM1t6)).
+
+
+|          team          | webmaster | manager | sales | support |
+|:----------------------:|:---------:|:-------:|:-----:|:-------:|
+|  valeur à renseignée   |    WM     |   MA    |  SA   |   SU    |
+| accès à l'admin Django |    oui    |   oui   |  non  |   non   |
+
+
+
+##### Où trouver le DNS de Sentry <a name="config_project_sentry"></a> #####
 
 
 
