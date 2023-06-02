@@ -34,7 +34,7 @@
 
 Ce CRM (Customer Relationship Management) permet le suivi de tous les clients et événements gérés par l'entreprise EPIC Events.
 
-L'utilisation de ce CRM nécessite un compte (voir [Droit admin et comptes](#admin_user)).\
+L'utilisation de ce CRM nécessite un compte (voir [Droit admin et comptes](#admin_team)).\
 Le CRM est monitorable avec Sentry.
 
 
@@ -155,10 +155,10 @@ Le CRM est monitorable avec Sentry.
 
 1. Créer un compte Sentry [ici](https://sentry.io/signup/)
 2. Créer un projet dans Sentry.
-3. Récupérer le DNS du projet de Sentry
+3. Récupérer le DNS du projet de Sentry.
 4. Renseigner le DNS Sentry dans le fichier .env du projet ([Configuration du project](#config_project))
-5. Vérifier que le projet dans Sentry est bien lié au projet
-   1. Démarrer le serveur [Démarrer le serveur local](#runserver)
+5. Vérifier que le projet dans Sentry est bien lié au projet.
+   1. Démarrer le serveur [(Démarrer le serveur local](#runserver)).
    2. 
       ```
       localhost:8000/crm_ee/sentry-debug/
@@ -194,6 +194,6 @@ La documentation Postman de l'API est à [cette adresse](https://documenter.getp
 
 
 
-## Bugs connus <a name="bugs-connus"></a> #
+### Bugs connus <a name="bugs-connus"></a> ###
 
 Aucun bug connu.
