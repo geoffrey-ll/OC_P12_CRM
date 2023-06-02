@@ -13,17 +13,16 @@
 
 1. [Description](#description)
 2. [Diagramme ERD](#erd_diagram)
-3. [Sentry monitoring](#sentry)
-4. [Installation et configuration](#install_config)
+3. [Installation et configuration](#install_config)
    1. [Prérequis](#prerequisite)
    2. [Installation du projet](#install_project) 
    3. [Configuration de PostgreSQL](#config_postgresql)
-   4. [Configuration de Sentry](#config_sentry)
    4. [Configuration du projet](#config_project)
       1. [Droits admin et teams](#admin_team)
-5. [Démarrer le serveur local](#runserver)
-6. [Documentation Postman](#doc_postman)
-7. [À propos](#a-propos)
+   5. [Configuration de Sentry (optionnel)](#config_sentry)
+4. [Démarrer le serveur local](#runserver)
+5. [Documentation Postman](#doc_postman)
+6. [À propos](#a-propos)
    1.  [Bugs connus](#bugs-connus)
 
 
@@ -35,27 +34,14 @@
 
 Ce CRM (Customer Relationship Management) permet le suivi de tous les clients et événements gérés par l'entreprise EPIC Events.
 
-L'utilisation de ce CRM nécessite un compte (voir [Droit admin et comptes](#admin_user)).
+L'utilisation de ce CRM nécessite un compte (voir [Droit admin et comptes](#admin_user)).\
+Le CRM est monitorable avec Sentry.
 
 
 
 # Diagramme ERD <a name="erd_diagram"></a> #
 
 ![Diagramme ERD .svg](readme_files/ERD_diagram.svg)
-
-
-
-# Sentry monitoring <a name="sentry"></a> #
-
-Le projet est liable à votre compte Sentry (voir [Configuration du projet](#config_project))\
-Après avoir installé et configuré le projet, vous pouvez vérifier que le compte est bien lié au projet sur :
-
-```
-localhost:8000/crm_ee/sentry-debug/
-```
-Cela doit générer une ZeroDivisionEror.
-
-![Sentry monitoring](readme_files/sentry_entry.png)
 
 
 
@@ -101,7 +87,7 @@ Cela doit générer une ZeroDivisionEror.
 
 
 
-### Configuration de postgreSQL <a name="config_postgresql"></a> ###
+### Configuration de PostgreSQL <a name="config_postgresql"></a> ###
 
 1. Lancez un shell PostgreSQL
     ```
@@ -122,12 +108,6 @@ Cela doit générer une ZeroDivisionEror.
 
 
 
-### Configuration de Sentry <a name="config_sentry"></a> ###
-
-![sentry sd](readme_files/sentry_create_project_and_get_dns_sd.gif)
-
-![sentry hd](readme_files/sentry_create_project_and_get_dns_hd.gif)
-
 ### Configuration du projet <a name="config_project"></a> ###
 
 1. À la racine du projet, créez un fichier ".env" contenant :
@@ -135,7 +115,8 @@ Cela doit générer une ZeroDivisionEror.
     SECRET_KEY="your secret key"
     DEBUG=True
     SENTRY_DSN="your URL DSN for sentry monitoring. Required sentry account. Is optionnel.
-               https://sentry.io/signup/ for create a account."
+               https://sentry.io/signup/ for create a account.
+               Voir section 'Configuration de Sentry' pour plus de détails."
    
     # Configuration DB postgreSQL
     DB_NAME="DB name"
@@ -170,7 +151,26 @@ Cela doit générer une ZeroDivisionEror.
 
 
 
-##### Où trouver le DNS de Sentry <a name="config_project_sentry"></a> #####
+### Configuration de Sentry (optionnel) <a name="config_sentry"></a> ###
+
+1. Créer un compte Sentry [ici](https://sentry.io/signup/)
+2. Créer un projet dans Sentry.
+3. Récupérer le DNS du projet de Sentry
+4. Renseigner le DNS Sentry dans le fichier .env du projet ([Configuration du project](#config_project))
+5. Vérifier que le projet dans Sentry est bien lié au projet
+   1. Démarrer le serveur [Démarrer le serveur local](#runserver)
+   2. 
+      ```
+      localhost:8000/crm_ee/sentry-debug/
+      ```
+      Cela doit générer une ZeroDivisionEror.
+            
+      ![Sentry monitoring](readme_files/sentry_entry.png)
+
+
+La vidéo illustre les étapes 2 à 4.
+
+![sentry sd](readme_files/sentry_create_project_and_get_dns_sd.gif)
 
 
 
@@ -186,14 +186,14 @@ Une fois l'installation et les configurations faites.
 
 # Documentation Postman <a name="doc_postman"></a> #
 
-
 La documentation Postman de l'API est à [cette adresse](https://documenter.getpostman.com/view/20658594/2s93JwM1t6)
+
 
 
 # À propos <a name="a-propos"></a> #
 
 
-## Bugs connus <a name="bugs-connus"></a> #
 
+## Bugs connus <a name="bugs-connus"></a> #
 
 Aucun bug connu.
