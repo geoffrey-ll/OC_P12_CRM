@@ -158,12 +158,12 @@ Le CRM est monitorable avec Sentry.
 3. Récupérer le DNS du projet de Sentry.
 4. Renseigner le DNS Sentry dans le fichier .env du projet ([Configuration du project](#config_project))
 5. Vérifier que le projet dans Sentry est bien lié au projet.
-   1. Démarrer le serveur [(Démarrer le serveur local](#runserver)).
+   1. Démarrer le serveur ([(Démarrer le serveur local](#runserver)).
    2. 
       ```
       localhost:8000/crm_ee/sentry-debug/
       ```
-      Cela doit générer une ZeroDivisionEror.
+      Cela doit générer une ZeroDivisionError.
             
       ![Sentry monitoring](readme_files/sentry_entry.png)
 
