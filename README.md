@@ -124,9 +124,9 @@ Cela doit générer une ZeroDivisionEror.
 
 ### Configuration de Sentry <a name="config_sentry"></a> ###
 
-[sentry sd](readme_files/sentry_create_project_and_get_dns_sd.gif)
+![sentry sd](readme_files/sentry_create_project_and_get_dns_sd.gif)
 
-[sentry hd](readme_files/sentry_create_project_and_get_dns_hd.gif)
+![sentry hd](readme_files/sentry_create_project_and_get_dns_hd.gif)
 
 ### Configuration du projet <a name="config_project"></a> ###
 
