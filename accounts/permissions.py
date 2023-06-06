@@ -35,6 +35,7 @@ class ContractPermission(BasePermission):
             if user.team == "SA":
                 if obj.client.sales_employee.id == user.id:
                     return True
+                return request.method in SAFE_METHODS
             if user.team == "SU":
                 return request.method in SAFE_METHODS
 
@@ -69,6 +70,7 @@ class EventPermission(BasePermission):
             if user.team == "SU":
                 if obj.support_employee.id == user.id:
                     return True
+                return request.method in SAFE_METHODS
 
 
 class PersonPermission(BasePermission):
