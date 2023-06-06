@@ -24,9 +24,9 @@ def validate_contract_number_format(value):
     """Check pour Contract, le format de contract_number."""
     str_contract_number = str(value)
 
-    def validate_endswith_contract_number(contract_number_of_month):
+    def validate_endswith_contract_number(contract_number_in_month):
         """Vérifie que le contract_number ne termine pas par 0000."""
-        if contract_number_of_month == "0000":
+        if contract_number_in_month == "0000":
             return ValidationError(MESS_VAL_ERR__CONTRACT_NUMBER_ENDSWITH)
         return ""
 
@@ -40,8 +40,8 @@ def validate_contract_number_format(value):
         """Vérifie que contract_number commence par YYYYMM en cours."""
         now = timezone.now()
         actually_year_month = str(now.year) + str(now.month).zfill(2)
-        if year_month_of_contract_number != actually_year_month:
-            return ValidationError(MESS_VAL_ERR__CONTRACT_NUMBER_STARTSWITH)
+        # if year_month_of_contract_number != actually_year_month:
+        #     return ValidationError(MESS_VAL_ERR__CONTRACT_NUMBER_STARTSWITH)
         return ""
 
     error_len = validate_len_contract_number()
